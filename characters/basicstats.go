@@ -18,10 +18,11 @@ type BasicStats struct {
 	Body *common.Stream
 } 
 
-func BRandNewStats() *BasicStats {
+func BRandNewStats(phys string) *BasicStats {
 	var buffer BasicStats
 	buffer.ID.Entificator = common.Epoch()
 	buffer.ID.Last = common.Epoch()
+	buffer.Body = common.BRandNewStream(phys, 3)
 	count := common.BornLuck(buffer.ID.Entificator)
 	for x:=0; x<count; x++ { buffer.SproutAStream(common.Elements[0]) }
 	for x:=0; x<5-count; x++ { buffer.GrowAStream() }
