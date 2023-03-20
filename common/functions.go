@@ -23,8 +23,9 @@ func Vector(props ...float64) float64 {
   return math.Sqrt(sum)
 }
 
+func Round(a float64) int { return int(math.Round(a)) } // for create stream
 func CeilRound(a float64) int { return int(math.Ceil(a)) } // for create stream
-func FloorRound(a float64) int { return int(math.Floor(a)) } // for filter streams
+// func FloorRound(a float64) int { return int(math.Floor(a)) } // for filter streams
 func ChancedRound(a float64) int {
   b,l:=math.Ceil(a),math.Floor(a)
   c:=math.Abs(math.Abs(a)-math.Abs(math.Min(b, l)))

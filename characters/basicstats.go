@@ -22,27 +22,25 @@ func BRandNewStats(phys string) *BasicStats {
 	var buffer BasicStats
 	buffer.ID.Entificator = common.Epoch()
 	buffer.ID.Last = common.Epoch()
-	buffer.Body = common.BRandNewStream(phys, 3)
+	buffer.Body = common.BRandNewStream(phys, 10)
+	buffer.Body.ScaleTo(common.Round(common.EthalonStreamLength*3))
 	count := common.BornLuck(buffer.ID.Entificator)
 	for x:=0; x<count; x++ { buffer.SproutAStream(common.Elements[0]) }
-	for x:=0; x<5-count; x++ { buffer.GrowAStream() }
+	upgrades := (7-count) * int(common.EthalonStreamLength)/common.GrowStep
+	for x:=0; x<upgrades; x++ { buffer.GrowAStream(false) }
 	return &buffer
 }
 
 func (stats *BasicStats) SproutAStream(elem string) {
-	*&stats.Streams = append(*&stats.Streams, common.BRandNewStream(elem, 1))
+	*&stats.Streams = append(*&stats.Streams, common.BRandNewStream(elem, common.MinEnthropy))
 }
-func (stats *BasicStats) GrowAStream() {
-	if len(*&stats.Streams) == 0 {return}
+func (stats *BasicStats) GrowAStream(override bool) {
+	if len(*&stats.Streams) == 0 {return} // nothing to upg
 	picker := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(*&stats.Streams))
 	picked := *&stats.Streams[picker]
-	for {
-		new := common.BRandNewStream(picked.Elem(), common.FloorRound(picked.Len(0)+1))
-		negativeCheckPass := new.Alt(0)-picked.Alt(0) > 0.001 && new.Cre(0)-picked.Cre(0) > 0.001 && new.Des(0)-picked.Des(0) > 0.001 
-		if negativeCheckPass {
-			*&stats.Streams[picker] = new 
-			return
-		}
+	successChance := picked.Plus( common.GrowStep ) > common.Rand()
+	if successChance || override { 
+		*&stats.Streams[picker] = picked
 	}
 }
 func (stats *BasicStats) GetID() string { 

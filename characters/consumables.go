@@ -27,7 +27,7 @@ func (state *Consumables) GetDotFrom(stream *common.Stream, atts *Attributes) {
 	var dot *common.Dot 
 	if atts.IsNPC == false { 
 		dot = stream.EmitDot() 
-		(*state).Pool = append((*state).Pool, dot)
+		if dot.Weight() != 0 { (*state).Pool = append((*state).Pool, dot) }
 		state.Heal( common.ChancedRound(1000 / *&atts.Vitality * dot.Weight()) ) 
 		common.Wait(1000 * math.Sqrt(dot.Weight()) )
 	} else {

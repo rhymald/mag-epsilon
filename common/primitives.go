@@ -1,7 +1,7 @@
 package common
 
 import (
-	"math"
+	"math" // for dot only
 )
 
 type Dot map[string]int 
@@ -15,7 +15,10 @@ type Element struct {
 } // ^ Makes strem weak, but chills: chill - harder penetration
 // else: no - regular penetration
 
-// ELEMENTS:
+
+    ////////////// 
+   // ELEMENTS // 
+	//////////////
 var Elements []string = []string{"◌ ", "🌪 ", "🔥", "🪨", "🧊", "🌑", "🩸", "🎶", "☀️ "} 
 var ElemList []Element = []Element{
 	Element{Is: Elements[0], Aka: "Common", EatenBy: []string{Elements[6]}},
@@ -37,30 +40,67 @@ var PhysList []Element = []Element{
 	Element{Is: Physical[4], Aka: "Forged", MadeOf: []string{Physical[1], Physical[2]}}, 
 }
 
-// DOTS
-func (str *Stream) EmitDot() *Dot { return &Dot{ str.Elem(): ChancedRound( math.Log2(str.Vol(1))) } }
-// ^ Dots creation and get dot's parameers:
+    //////////
+   // DOTS //
+  //////////
+func (str *Stream) EmitDot() *Dot { return &Dot{ str.Elem(): ChancedRound( math.Log2(str.Len(1))) } }
 func (dot *Dot) Weight() float64 { buf := *dot ; return float64(buf[dot.Elem()]) }
 func (dot *Dot) Elem() string { for elem, _ := range *dot { return elem } ; return "ERR" }
 
-// STREAMS
-const equalator = 1.024 // for resonation
-const segmentator = 1024.0 // for creating
-func BRandNewStream(elem string, leng int) *Stream {
-	c, a, d := 1/float64(leng)/float64(leng)+Rand()+Rand(), 1/float64(leng)/float64(leng)+Rand()+Rand(), 1/float64(leng)/float64(leng)+Rand()+Rand()
-	for r:=0; r<leng; r++ { c, a, d = c+1/float64(leng)/float64(leng)+Rand()+Rand(), a+1/float64(leng)/float64(leng)+Rand()+Rand(), d+1/float64(leng)/float64(leng)+Rand()+Rand() }
-	modifier := float64(leng) / Vector(c, a, d)
-	return &Stream{ elem: [3]int{ CeilRound(c*segmentator*modifier), CeilRound(a*segmentator*modifier), CeilRound(d*segmentator*modifier) }}
-} // ^ streamcreation and get its parameters: 
-// basic parameters:
-func (str *Stream) Elem() string { for elem, _ := range *str { return elem } ; return "ERR" }
-func (str *Stream) Cre(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][0])/segmentator+add }
-func (str *Stream) Alt(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][1])/segmentator+add }
-func (str *Stream) Des(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][2])/segmentator+add }
-// common params:
-func (str *Stream) Vol(add float64) float64 { return str.Cre(add)*str.Alt(add)*str.Des(add)-add*add*add }
+
+    /////////////
+   // STREAMS //
+  /////////////
+const EthalonStreamLength float64 = 1024
+const BaseStreamLength float64 = 512
+const GrowStep int = 128
+const MinEnthropy int = 2
+func BRandNewStream(elem string, length int) *Stream {
+	leng := BaseStreamLength / 2
+	if elem == Elements[0] { leng = BaseStreamLength }
+	if elem == Elements[5] { leng = BaseStreamLength / 4 }
+	if elem == Elements[8] { leng = BaseStreamLength / 8 }
+	enthropy := 1/float64(length+1)/float64(length+1)
+	c, a, d := (1+Rand()-Rand())*enthropy, (1+Rand()-Rand())*enthropy, (1+Rand()-Rand())*enthropy
+	for step:=0; step<length-1; step++ { c, a, d = c+(1+Rand()-Rand())*enthropy, a+(1+Rand()-Rand())*enthropy, d+(1+Rand()-Rand())*enthropy }
+	modifier := 1 / Vector(c, a, d)
+	return &Stream{ elem: [3]int{ CeilRound(c*leng*modifier), CeilRound(a*leng*modifier), CeilRound(d*leng*modifier) }}
+} 
+// func (str *Stream) mean() float64 { return 3/(1/str.Cre(0)+1/str.Alt(0)+1/str.Des(0)) }
 func (str *Stream) Len(add float64) float64 { return Vector(str.Cre(0),str.Alt(0),str.Des(0))+add }
-func (str *Stream) Mean() float64 { return 3/(1/str.Cre(0)+1/str.Alt(0)+1/str.Des(0)) }
+func (str *Stream) Harmony() float64 {  return math.Log2(str.Len(0) / math.Max(math.Max(str.Cre(0), str.Alt(0)), str.Des(0))) / math.Log2( math.Sqrt(3) ) }
+func (str *Stream) Elem() string { for elem, _ := range *str { return elem } ; return "ERR" }
+func (str *Stream) Cre(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][0])/EthalonStreamLength+add }
+func (str *Stream) Alt(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][1])/EthalonStreamLength+add }
+func (str *Stream) Des(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][2])/EthalonStreamLength+add }
+func (str *Stream) RandShapeAs(cc, aa, dd int) {
+	keepLen := str.Len(0) * EthalonStreamLength
+	entroc, entroa, entrod := 1/float64(cc+1)/float64(cc+1), 1/float64(aa+1)/float64(aa+1), 1/float64(dd+1)/float64(dd+1)
+	c, a, d := (1+Rand()-Rand())*entroc, (1+Rand()-Rand())*entroa, (1+Rand()-Rand())*entrod 
+	for step:=0; step<cc-1; step++ { c += entroc*(1+Rand()-Rand()) }
+	for step:=0; step<aa-1; step++ { a += entroa*(1+Rand()-Rand()) }
+	for step:=0; step<dd-1; step++ { d += entrod*(1+Rand()-Rand()) }
+	modifier := 1 / Vector(c, a, d)
+	*str = Stream{ str.Elem(): [3]int{ Round(c*keepLen*modifier), Round(a*keepLen*modifier), Round(d*keepLen*modifier) }}
+}
+func (str *Stream) ScaleTo(ll int) {
+	multiplier := float64(ll) / EthalonStreamLength / str.Len(0)
+	c, a, d := str.Cre(0)*EthalonStreamLength, str.Alt(0)*EthalonStreamLength, str.Des(0)*EthalonStreamLength
+	*str = Stream{ str.Elem(): [3]int{ Round(c*multiplier), Round(a*multiplier), Round(d*multiplier) }}
+}
+func (str *Stream) Plus(ll int) float64 {
+	increasement := BRandNewStream(str.Elem(), MinEnthropy+ll/GrowStep)
+	increasement.ScaleTo(ll)
+	newLen := str.Len(0)*EthalonStreamLength+float64(ll)
+	*str = Stream{ str.Elem(): [3]int{ 
+		Round((str.Cre(0)+increasement.Cre(0))*EthalonStreamLength), 
+		Round((str.Alt(0)+increasement.Alt(0))*EthalonStreamLength), 
+		Round((str.Des(0)+increasement.Des(0))*EthalonStreamLength), 
+	}}
+	multiplier := str.Len(0)*EthalonStreamLength / newLen
+	str.ScaleTo(Round(newLen))
+	return multiplier
+}
 // complex improve:  TBD
 // Ca, Cd, Cad/Cda 
 // Ad, Ac, Adc/Acd 
