@@ -1,7 +1,7 @@
 package characters 
 
 import (
-	"rhymald/mag-epsilon/common"
+	"rhymald/mag-epsilon/balance/common"
 	"math"
 )
 

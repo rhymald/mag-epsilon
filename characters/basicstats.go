@@ -1,7 +1,7 @@
 package characters 
 
 import (
-	"rhymald/mag-epsilon/common"
+	"rhymald/mag-epsilon/balance/common"
 	"fmt"
 	"crypto/sha512"
   "encoding/binary"
@@ -26,7 +26,7 @@ func BRandNewStats(phys string) *BasicStats {
 	buffer.Body.ScaleTo(common.Round(common.EthalonStreamLength*3))
 	count := common.BornLuck(buffer.ID.Entificator)
 	for x:=0; x<count; x++ { buffer.SproutAStream(common.Elements[0]) }
-	upgrades := (7-count) * int(common.EthalonStreamLength)/common.GrowStep
+	upgrades := (5-count) * int(common.EthalonStreamLength)/common.GrowStep
 	for x:=0; x<upgrades; x++ { buffer.GrowAStream(false) }
 	return &buffer
 }

@@ -4,7 +4,7 @@ import (
 	"math"
   "testing"
 	"rhymald/mag-epsilon/fancy"
-	"rhymald/mag-epsilon/common"
+	"rhymald/mag-epsilon/balance/common"
 )
 
 func Test_BRandNewStats(t *testing.T){
