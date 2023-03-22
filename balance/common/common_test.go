@@ -1,7 +1,7 @@
 package common
 
 import "testing"
-import "math"
+// import "math"
 
 func Test_BRandNewStream(t *testing.T){
 	elems:=len(Elements)
@@ -14,7 +14,7 @@ func Test_BRandNewStream(t *testing.T){
 		for d:=0; d<5; d++ {
 			dot := buffer.EmitDot()
 			if dot.Weight() != 0 {
-				t.Logf("    - %.1f produces %s dot of %.0f weight", math.Log2(buffer.Len(1)), dot.Elem(), dot.Weight() )
+				t.Logf("    - %.3f produces %s dot of %.0f weight", DotWeightFromStreamLen(buffer.Len(1)), dot.Elem(), dot.Weight() )
 			}
 		}
 		t.Logf("-------------------------------------------------")

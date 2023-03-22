@@ -8,6 +8,8 @@ import (
   "time"
 )
 
+func Log(a float64) float64 { return math.Log2(a+1)/math.Log2(math.Pi) }
+
 func Rand() float64 {
   x := (time.Now().UnixNano())
   in_bytes := make([]byte, 8)

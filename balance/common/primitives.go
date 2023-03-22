@@ -43,7 +43,8 @@ var PhysList []Element = []Element{
     //////////
    // DOTS //
   //////////
-func (str *Stream) EmitDot() *Dot { return &Dot{ str.Elem(): ChancedRound( math.Log2(str.Len(1))) } }
+func DotWeightFromStreamLen(a float64) float64 { return  4/3 * math.Pi * math.Pow(Log(a/2),3) }
+func (str *Stream) EmitDot() *Dot { return &Dot{ str.Elem(): ChancedRound( DotWeightFromStreamLen( str.Len(1) ) ) } }
 func (dot *Dot) Weight() float64 { buf := *dot ; return float64(buf[dot.Elem()]) }
 func (dot *Dot) Elem() string { for elem, _ := range *dot { return elem } ; return "ERR" }
 

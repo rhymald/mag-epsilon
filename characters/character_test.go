@@ -1,7 +1,6 @@
 package characters
 
 import (
-	"math"
   "testing"
 	"rhymald/mag-epsilon/fancy"
 	"rhymald/mag-epsilon/balance/common"
@@ -15,7 +14,7 @@ func Test_BRandNewStats(t *testing.T){
 		t.Logf("Generated player %s with body, %sand %d streams%s", buffer.GetID(), fancy.Clr(6-len(buffer.Streams)), len(buffer.Streams), fancy.Clr(0))
 		t.Logf("  Body %s %.3f x %.3f x %.3f  | len %.3f", buffer.Body.Elem(), buffer.Body.Cre(0), buffer.Body.Alt(0), buffer.Body.Des(0), buffer.Body.Len(0))
 		for i, each := range buffer.Streams {
-			t.Logf("    - %d'%s %.3f x %.3f x %.3f | harm %.1f%% | len %.3f | %.3f dot", i+1, each.Elem(), each.Cre(0), each.Alt(0), each.Des(0), each.Harmony()*100, each.Len(0), math.Log2(each.Len(1)))
+			t.Logf("    - %d'%s %.3f x %.3f x %.3f | harm %.1f%% | len %.3f | %.3f dot", i+1, each.Elem(), each.Cre(0), each.Alt(0), each.Des(0), each.Harmony()*100, each.Len(0), common.DotWeightFromStreamLen(each.Len(1)))
 		}
 		t.Logf("-------------------------------------------------------------------------")
 	}
