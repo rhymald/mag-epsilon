@@ -6,7 +6,12 @@ import (
   "crypto/sha512"
   "encoding/binary"
   "time"
+  "strings"
 )
+
+func Split(what string) []string { return strings.Split(what, "|") }
+// XYZ+RRR from str
+// str to XYZ+RRR
 
 func Log(a float64) float64 { return math.Log2(a+1)/math.Log2(math.Pi) }
 
