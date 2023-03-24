@@ -7,14 +7,14 @@ func Test_BRandNewStream(t *testing.T){
 	elems:=len(Elements)
 		t.Logf("-------------------------------------------------")
 		for x:=0; x<10; x++ {
-		buffer := BRandNewStream(Elements[x%elems], 0)
+		buffer := BRandNewStream(Elements[x%elems], MinEnthropy)
 		// for g:=0; g<(x+1)*(x+1)*(x+1); g++ { buffer.GrowAStream() }
 		t.Logf("Stream of %s with length %.3f", buffer.Elem(), buffer.Len(0))
 		t.Logf("  cre: %.3f, - alt %.3f, - des %.3f", buffer.Cre(0), buffer.Alt(0), buffer.Des(0))
 		for d:=0; d<3; d++ {
 			dot := buffer.EmitDot()
 			if (*dot)[dot.Elem()] != 0 {
-				t.Logf("    - %.3f produces %s dot of %.3f weight", DotWeightFromStreamLen(buffer.Len(1)), dot.Elem(), dot.Weight() )
+				t.Logf("    - %.3f produces %s dot of %.3f weight", DotWeightFromStreamLen(buffer.Len(1)), dot.Elem(), dot.Weight())
 			}
 		}
 		t.Logf("-------------------------------------------------")
@@ -22,14 +22,15 @@ func Test_BRandNewStream(t *testing.T){
 }
 
 func Test_Actions(t *testing.T){
+	plus := 128
 	action := NewAction("Interruption")
 	t.Logf("Creating - %+v", *action)
-	stream := BRandNewStream(Elements[0], 0)
+	stream := BRandNewStream(Elements[0], MinEnthropy)
 	for x:=0; x<0; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
-		stream.Plus(128)
+		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
 	t.Logf("Interrupted - Valid: %+v (false)", action.Valid())
@@ -40,12 +41,11 @@ func Test_Actions(t *testing.T){
 	t.Logf("-------------------------------------------------")
 	action = NewAction("Low")
 	t.Logf("Creating - %+v", *action)
-	// stream := BRandNewStream(Elements[0], 0)
-	for x:=0; x<4; x++ {
+	for x:=0; x<1; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
-		stream.Plus(128)
+		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
 	t.Logf("Low energy - Valid: %+v (false)", action.Valid())
@@ -56,12 +56,11 @@ func Test_Actions(t *testing.T){
 	t.Logf("-------------------------------------------------")
 	action = NewAction("Weak")
 	t.Logf("Creating - %+v", *action)
-	// stream := BRandNewStream(Elements[0], 0)
-	for x:=0; x<9; x++ {
+	for x:=0; x<4; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
-		stream.Plus(128)
+		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
 	t.Logf("Weak streams - Valid: %+v (false)", action.Valid())
@@ -72,12 +71,11 @@ func Test_Actions(t *testing.T){
 	t.Logf("-------------------------------------------------")
 	action = NewAction("SelfCast")
 	t.Logf("Creating - %+v", *action)
-	// stream := BRandNewStream(Elements[0], 0)
-	for x:=0; x<1; x++ {
+	for x:=0; x<7; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
-		stream.Plus(128)
+		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
 	t.Logf("Self - Valid: %+v (false)", action.Valid())
@@ -88,12 +86,11 @@ func Test_Actions(t *testing.T){
 	t.Logf("-------------------------------------------------")
 	action = NewAction("Success")
 	t.Logf("Creating - %+v", *action)
-	// stream := BRandNewStream(Elements[0], 0)
-	for x:=0; x<7; x++ {
+	for x:=0; x<9; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
-		stream.Plus(128)
+		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
 	t.Logf("100%% success - Valid: %+v (false)", action.Valid())
@@ -101,4 +98,15 @@ func Test_Actions(t *testing.T){
 	t.Logf(" - %+v", *action)
 	t.Logf("100%% success: %+v", *&action.Result)
 	t.Logf("100%% success - Valid: %+v, Succeeded: %+v (true)", action.Valid(), action.Succeeded())
+}
+
+func Test_Eitdot(t *testing.T){
+	plus := 1024
+	stream := BRandNewStream(Elements[0], MinEnthropy)
+	for x:=0; x<10; x++ {
+		dot := stream.EmitDot()
+		t.Logf("produced %s: %.3f / %.3f weight - with %+v", dot.Elem(), DotWeightFromStreamLen(stream.Len(1)), dot.Weight(), *stream)
+		// stream.Attune()
+		stream.ScaleTo(2*int( float64(plus) * stream.Len(0) ))
+	}
 }

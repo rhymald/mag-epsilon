@@ -37,7 +37,7 @@ func Test_Character(t *testing.T){
 	t.Logf("-------------------------------------------------------------------------")
 	char.Cons = BrandNewLife()
 	streamCount := len(*&char.Base.Streams)
-	for x:=0; x<12; x++ {
+	for x:=0; x<24; x++ {
 		dots := ""
 		for _, each := range *&char.Cons.Pool { dots = fmt.Sprintf("%s %+v", dots, *each) }
 		t.Logf("%sHP:%s %5.1f%% | %sDots:%s%s", fancy.B, fancy.E[0], float64(*&char.Cons.HP)/10, fancy.B, fancy.E[0], dots)
@@ -46,7 +46,7 @@ func Test_Character(t *testing.T){
 		if x%4 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%6 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%9 == 0 { _, _ = char.Cons.BurnDot() }
-		char.Cons.GetDotFrom(*&char.Base.Streams[x%streamCount], char.Atts)
+		char.Cons.GetDotFrom(*&char.Base.Streams[x%streamCount])
 		if float64(len(*&char.Cons.Pool)) >= *&char.Atts.Poolsize+1 {break}
 	}
 }

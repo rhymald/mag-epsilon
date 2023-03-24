@@ -18,11 +18,13 @@ type BasicStats struct {
 	Body *common.Stream
 } 
 
+
+// CREATE
 func BRandNewStats(phys string) *BasicStats {
 	var buffer BasicStats
 	buffer.ID.Entificator = common.Epoch()
 	buffer.ID.Last = common.Epoch()
-	buffer.Body = common.BRandNewStream(phys, 10)
+	buffer.Body = common.BRandNewStream(phys, 16)
 	buffer.Body.ScaleTo(common.Round(common.EthalonStreamLength*3))
 	count := common.BornLuck(buffer.ID.Entificator)
 	for x:=0; x<count; x++ { buffer.SproutAStream(common.Elements[0]) ; buffer.Streams[x].Attune() }
@@ -31,9 +33,12 @@ func BRandNewStats(phys string) *BasicStats {
 	return &buffer
 }
 
+
+// LEVELING
 func (stats *BasicStats) SproutAStream(elem string) {
 	*&stats.Streams = append(*&stats.Streams, common.BRandNewStream(elem, common.MinEnthropy))
 }
+
 func (stats *BasicStats) GrowAStream(override bool) {
 	if len(*&stats.Streams) == 0 {return} // nothing to upg
 	picker := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(*&stats.Streams))
@@ -43,6 +48,9 @@ func (stats *BasicStats) GrowAStream(override bool) {
 		*&stats.Streams[picker] = picked
 	}
 }
+
+
+// READ
 func (stats *BasicStats) GetID() string { 
 	in_bytes := make([]byte, 8)
   binary.LittleEndian.PutUint64(in_bytes, uint64(stats.ID.Entificator))

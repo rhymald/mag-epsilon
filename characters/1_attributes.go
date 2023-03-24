@@ -13,14 +13,16 @@ type Attributes struct {
 	Resists map[string]float64
 } 
 
+
+// CREATE
 func (stats *BasicStats) CalculaterAttributes(isnpc bool) *Attributes {
 	var buffer Attributes
 	buffer.Resists = make(map[string]float64)
 	buffer.IsNPC = common.Epoch() < stats.ID.Last
-	buffer.Vitality = common.EthalonStreamLength / float64(common.GrowStep) * (*&stats.Body).Mean() * (1+common.DotWeightFromStreamLen((*&stats.Body).Len(0)))
+	buffer.Vitality = common.DotWeightFromStreamLen(10 + (*stats).Body.Mean()) * common.EthalonStreamLength/float64(common.GrowStep)
 	for _, each := range *&stats.Streams { 
-		buffer.Poolsize += math.Sqrt((1 + each.Mean()) * (1 + each.Mean()) * (1 + each.Mean()) / (1 + common.DotWeightFromStreamLen(each.Len(0))))
-		if each.Elem() != common.Elements[0] { buffer.Resists[each.Elem()] += each.Mean() }
+		buffer.Poolsize += math.Log10(1 + each.Mean()) * common.EthalonStreamLength / float64(common.GrowStep)
+		if each.Elem() != common.Elements[0] { buffer.Resists[each.Elem()] += math.Log2(each.Mean()+1) }
 	}
 	buffer.XYZ = LoginPoints[stats.ID.Last%len(LoginPoints)]
 	return &buffer

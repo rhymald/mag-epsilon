@@ -13,8 +13,14 @@ func Split(what string) []string { return strings.Split(what, "|") }
 // XYZ+RRR from str
 // str to XYZ+RRR
 
-func Log(a float64) float64 { return math.Log2(a+1)/math.Log2(math.Pi) }
+// func Log(a float64) float64 { return math.Log2(a+1)/math.Log2(math.Pi) }
 
+func Ntrp(a float64) float64 { 
+  entropy := math.Log10(a+1)/25 
+  presult := a*(1+Rand()*(0.0132437+entropy)-Rand()*(0.0132437+entropy)) 
+  return math.Round( presult*1000 ) / 1000
+}
+// func IsWithin(rand, base float64) bool { entropy := math.Log10(base+1)/25 ; return (1+0.0132437+entropy)*base > rand && (1-0.0132437-entropy)*base < rand }
 func Rand() float64 {
   x := (time.Now().UnixNano())
   in_bytes := make([]byte, 8)
