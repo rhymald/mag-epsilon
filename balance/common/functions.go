@@ -7,20 +7,37 @@ import (
   "encoding/binary"
   "time"
   "strings"
+  // "fmt"
 )
 
+// STRINGS
 func Split(what string) []string { return strings.Split(what, "|") }
 // XYZ+RRR from str
 // str to XYZ+RRR
 
-// func Log(a float64) float64 { return math.Log2(a+1)/math.Log2(math.Pi) }
 
-func Ntrp(a float64) float64 { 
-  entropy := math.Log10(a+1)/25 
-  presult := a*(1+Rand()*(0.0132437+entropy)-Rand()*(0.0132437+entropy)) 
-  return math.Round( presult*1000 ) / 1000
+// FLOATS
+func Log2(a float64) float64 { return math.Log2(a+1) }
+func Log7(a float64) float64 { return math.Log2(a+1)/math.Log2(7) }
+func Log10(a float64) float64 { return math.Log10(a+1) }
+func Popow(a float64) float64 { return math.Pow(a,a) }
+func Cbrt(a float64) float64 { return math.Cbrt(a+1)-1 }
+
+func IsWithin(rand, base float64) bool { 
+  entropy := Log10(base)/25
+  if (1+0.0132437+entropy)*base+0.001 > rand && (1+0.0132437+entropy)*base-0.001 < rand { return true }
+  if (1-0.0132437-entropy)*base+0.001 > rand && (1-0.0132437-entropy)*base-0.001 < rand { return true }
+  if base+0.001 > rand && base-0.001 < rand { return true }
+  return false
 }
-// func IsWithin(rand, base float64) bool { entropy := math.Log10(base+1)/25 ; return (1+0.0132437+entropy)*base > rand && (1-0.0132437-entropy)*base < rand }
+func Ntrp(a float64) float64 { 
+  randy := ( Epoch() / 1000000000 ) % 4
+  entropy := Log10(a)/25 
+  if randy == 2 { a = a*(1+0.0132437+entropy) }
+  if randy == 0 { a = a*(1-0.0132437-entropy) }
+  return math.Round( a*1000 ) / 1000
+}
+
 func Rand() float64 {
   x := (time.Now().UnixNano())
   in_bytes := make([]byte, 8)
@@ -36,6 +53,8 @@ func Vector(props ...float64) float64 {
   return math.Sqrt(sum)
 }
 
+
+// FLOAT to INT
 func Round(a float64) int { return int(math.Round(a)) } // for create stream
 func CeilRound(a float64) int { return int(math.Ceil(a)) } // for create stream
 // func FloorRound(a float64) int { return int(math.Floor(a)) } // for filter streams
@@ -49,4 +68,6 @@ func ChancedRound(a float64) int {
 
 func BornLuck(time int) int { if time%10 == 0 {return 2} else if time%10 == 9 {return 5} else if time%10 < 5 {return 3} else {return 4} ; return 0}
 func Epoch() int { return int(time.Now().UnixNano()) }
+
+// TIME
 func Wait(ms float64) { time.Sleep( time.Millisecond * time.Duration( ms )) }

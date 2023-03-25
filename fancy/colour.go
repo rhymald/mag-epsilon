@@ -22,5 +22,5 @@ var (
 )
 
 func Err() string { return fmt.Sprintf("%s%s%s", B, R, E[6]) }
-func Wrn() string { return fmt.Sprintf("%s%s%s", B, U, E[8]) }
+func Wrn() string { return fmt.Sprintf("%s%s%s", B, U, E[2]) }
 func Clr(e int) string { if e > 0 && e < 9 { return fmt.Sprintf("%s%s", B, E[e]) } ; return fmt.Sprintf("%s%s", B, E[0]) }

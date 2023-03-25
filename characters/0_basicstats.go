@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"crypto/sha512"
   "encoding/binary"
-	"math/rand"
-	"time"
 )
 
 type BasicStats struct {
@@ -41,7 +39,7 @@ func (stats *BasicStats) SproutAStream(elem string) {
 
 func (stats *BasicStats) GrowAStream(override bool) {
 	if len(*&stats.Streams) == 0 {return} // nothing to upg
-	picker := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(*&stats.Streams))
+	picker := common.Epoch() % len(*&stats.Streams)
 	picked := *&stats.Streams[picker]
 	successChance := picked.Plus( common.GrowStep ) > common.Rand()
 	if successChance || override { 

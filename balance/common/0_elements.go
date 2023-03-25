@@ -19,7 +19,7 @@ var Elements, Physical []string = []string{"◌ ", "🌪 ", "🔥", "🪨", "�
 var ElemList, PhysList map[string]*Element = InitEpoch(1)
 
 func (e *Element) AllowAttunes(nexts []string) { for _, each := range nexts  { (*e).Next = append((*e).Next, each) } }
-func (e *Element) AllowFractals(nexts []string) { for _, each := range nexts  { (*e).Fractals = append((*e).Fractals, each) } }
+func (e *Element) AllowFractal(frac string) { (*e).Fractals = append((*e).Fractals, frac) }
 
 func InitEpoch(epoch int) (map[string]*Element, map[string]*Element) {
 	// Prepared:
@@ -52,7 +52,9 @@ func InitEpoch(epoch int) (map[string]*Element, map[string]*Element) {
 	}
 
 	// EPOCH 0: simplest energy jinxing - could not distinguish energy kinds: nature/element
-	elements[Elements[0]].AllowFractals([]string{"Jinx"})  // upgradable to any basic
+	elements[Elements[0]].AllowFractal("Jinx")  // upgradable to any basic
+	physicals[Physical[1]].AllowFractal("Punch")  // upgradable to any basic
+	physicals[Physical[2]].AllowFractal("Sting")  // upgradable to any basic
 	if epoch == 0 { return elements, physicals }
 
 	// EPOCH 1: before Echaen: destruction mostly, 

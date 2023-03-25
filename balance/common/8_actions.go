@@ -2,6 +2,8 @@ package common
 
 import (
 	"fmt"
+	"errors"
+	"strconv"
 )
 
 type Action struct { 
@@ -65,22 +67,36 @@ func (action *Action) Finish(target float64, dots, needed int, place, direction 
 func (action *Action) Interrupt(bywhat string, where [3]int) {
 	*&action.End = Epoch() - *&action.Start
 	if len(Split(bywhat)) < 1 { bywhat = "UNKNOWN" }
-	*&action.Result = fmt.Sprintf("INTERRUPTED|%s|%d|%d|%d", bywhat, where[0], where[1], where[2])
+	*&action.Result = fmt.Sprintf("INTERRUPTED|by|%s|at|%d|%d|%d", bywhat, where[0], where[1], where[2])
 }
 
 
 // READ
+func (action *Action) Where() ([3]int, error) {
+	result := Split( *&action.Result )
+	var buffer [3]int
+	if len(result) < 3 { return buffer, errors.New("Invalid result: has no coordinates") }
+	xstr, ystr, zstr := result[len(result)-3], result[len(result)-2], result[len(result)-1]
+	x, err := strconv.Atoi(xstr) ; if err != nil { return buffer, errors.New("Invalid result: x[-3] cant be parsed") }
+	y, err := strconv.Atoi(ystr) ; if err != nil { return buffer, errors.New("Invalid result: y[-2] cant be parsed") }
+	z, err := strconv.Atoi(zstr) ; if err != nil { return buffer, errors.New("Invalid result: z[-1] cant be parsed") }
+	buffer = [3]int{x,y,z}
+	return buffer, nil
+}
+
 func (action *Action) Succeeded() bool { return action.Valid() && ( action.Failed() == false ) }
 func (action *Action) Failed() bool { result := Split( *&action.Result ) ;  return result[0] == "INTERRUPTED" || result[0] == "RUINED" || result[0] == "FAILED" }
+
 func (action *Action) Valid() bool {
 	finishCheck := *&action.End > 0
 	if finishCheck == false { return false }
  	result := Split( *&action.Result ) 
-	lenCheck := len(result) == 5 || len(result) == 9 || len(result) == 10
+	lenCheck := len(result) == 7 || len(result) == 9 || len(result) == 10
 	if lenCheck == false { return false }
-	// coordCheck := false
+	coordCheck := false
+	_, err := action.Where() ; if err == nil { coordCheck = true } else { return false }
 	// interrupterCheck := false : len5, interrupt, !unknown, coord
 	// ruinFailCheck := false : len6, fail/ruin, at, rate<targ, coord 
 	// vectorCheck := false : len7, from, vec=1, coord
-	return true
+	return true && coordCheck
 }

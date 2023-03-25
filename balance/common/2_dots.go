@@ -1,7 +1,7 @@
 package common
 
 import (
-	"math" // for dot only
+	// "math" // for dot only
 	// "math/rand"
 	// "time"
 	// "fmt"
@@ -13,7 +13,7 @@ const EthalonDotWeight float64 = 1024
 
 
 // NEW
-func DotWeightFromStreamLen(a float64) float64 { return math.Pow(math.Log10(a), math.Log10(a)) }
+func DotWeightFromStreamLen(a float64) float64 { return Popow(Log7(a)) }
 func (str *Stream) EmitDot() *Dot { return &Dot{ str.Elem(): CeilRound( EthalonDotWeight* Ntrp( DotWeightFromStreamLen(str.Len(1)) )) } }
 
 

@@ -1,7 +1,10 @@
 package common
 
-import "testing"
-// import "math"
+import (
+	"testing"
+	"rhymald/mag-epsilon/fancy"
+	// "math"
+)
 
 func Test_BRandNewStream(t *testing.T){
 	elems:=len(Elements)
@@ -22,6 +25,7 @@ func Test_BRandNewStream(t *testing.T){
 }
 
 func Test_Actions(t *testing.T){
+	pass, pass2, reset := fancy.Clr(1), fancy.Clr(1), fancy.Clr(0) 
 	plus := 128
 	action := NewAction("Interruption")
 	t.Logf("Creating - %+v", *action)
@@ -33,80 +37,105 @@ func Test_Actions(t *testing.T){
 		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
-	t.Logf("Interrupted - Valid: %+v (false)", action.Valid())
+	if action.Valid() == false { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	t.Logf("Interrupted - %sValid: %+v%s (false)", pass, action.Valid(), reset)
 	action.Interrupt("1234-123456789-1-1234567", [3]int{4,-9,1})
 	t.Logf(" - %+v", *action)
 	t.Logf("Interrupted: %+v", *&action.Result)
-	t.Logf("Interrupted - Valid: %+v, Succeeded: %+v (false)", action.Valid(), action.Succeeded())
+	if action.Valid() == true { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	if action.Succeeded() == false { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(2) }
+	t.Logf("Interrupted - %sValid: %+v%s, %sSucceeded: %+v%s (false)", pass, action.Valid(), reset, pass2, action.Succeeded(), reset)
 	t.Logf("-------------------------------------------------")
 	action = NewAction("Low")
 	t.Logf("Creating - %+v", *action)
-	for x:=0; x<1; x++ {
+	for x:=0; x<3; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
 		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
-	t.Logf("Low energy - Valid: %+v (false)", action.Valid())
+	if action.Valid() == false { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	t.Logf("Low energy - %sValid: %+v%s (false)", pass, action.Valid(), reset)
 	action.Finish(0.9, 3, 15, [3]int{4,9,0}, [3]int{0,1,7})
 	t.Logf(" - %+v", *action)
 	t.Logf("Low energy: %+v", *&action.Result)
-	t.Logf("Low energy - Valid: %+v, Succeeded: %+v (any)", action.Valid(), action.Succeeded())
+	if action.Valid() == true { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	t.Logf("Low energy - %sValid: %+v%s, Succeeded: %+v (any)", pass, action.Valid(), reset, action.Succeeded())
 	t.Logf("-------------------------------------------------")
 	action = NewAction("Weak")
 	t.Logf("Creating - %+v", *action)
-	for x:=0; x<4; x++ {
+	for x:=0; x<3; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
 		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
-	t.Logf("Weak streams - Valid: %+v (false)", action.Valid())
+	if action.Valid() == false { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	t.Logf("Weak - %sValid: %+v%s (false)", pass, action.Valid(), reset)
 	action.Finish(0.1, 12, 15, [3]int{4,9,0}, [3]int{0,1,7})
 	t.Logf(" - %+v", *action)
 	t.Logf("Weak streams: %+v", *&action.Result)
-	t.Logf("Weak streams - Valid: %+v, Succeeded: %+v (any)", action.Valid(), action.Succeeded())
+	if action.Valid() == true { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	if action.Succeeded() == false { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(2) }
+	t.Logf("Weak streams - %sValid: %+v%s, Succeeded: %+v (any)", pass, action.Valid(), reset, action.Succeeded())
 	t.Logf("-------------------------------------------------")
 	action = NewAction("SelfCast")
 	t.Logf("Creating - %+v", *action)
-	for x:=0; x<7; x++ {
+	for x:=0; x<3; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
 		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
-	t.Logf("Self - Valid: %+v (false)", action.Valid())
+	if action.Valid() == false { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	t.Logf("Self - %sValid: %+v%s (false)", pass, action.Valid(), reset)
 	action.Finish(1, 15, 15, [3]int{4,9,17}, [3]int{0,0,0})
 	t.Logf(" - %+v", *action)
 	t.Logf("Self: %+v", *&action.Result)
-	t.Logf("Self - Valid: %+v, Succeeded: %+v (true)", action.Valid(), action.Succeeded())
+	if action.Valid() == true { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	if action.Succeeded() == true { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(2) }
+	t.Logf("Self - %sValid: %+v%s, %sSucceeded: %+v%s (true)", pass, action.Valid(), reset, pass2, action.Succeeded(), reset)
 	t.Logf("-------------------------------------------------")
 	action = NewAction("Success")
 	t.Logf("Creating - %+v", *action)
-	for x:=0; x<9; x++ {
+	for x:=0; x<3; x++ {
 		dot := stream.EmitDot()
 		action.Feed(x, dot)
 		stream.Attune()
 		stream.Plus(plus)
 		t.Logf(" - %+v", *action)
   }
-	t.Logf("100%% success - Valid: %+v (false)", action.Valid())
+	if action.Valid() == false { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	t.Logf("100%% success - %sValid: %+v%s (false)", pass, action.Valid(), reset)
 	action.Finish(1, 15, 15, [3]int{4,9,0}, [3]int{0,1,7})
 	t.Logf(" - %+v", *action)
 	t.Logf("100%% success: %+v", *&action.Result)
-	t.Logf("100%% success - Valid: %+v, Succeeded: %+v (true)", action.Valid(), action.Succeeded())
+	if action.Valid() == true { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
+	if action.Succeeded() == true { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(2) }
+	t.Logf("100%% success - %sValid: %+v%s, %sSucceeded: %+v%s (true)", pass, action.Valid(), reset, pass2, action.Succeeded(), reset)
 }
 
-func Test_Eitdot(t *testing.T){
+func Test_EmitDot(t *testing.T){
 	plus := 1024
 	stream := BRandNewStream(Elements[0], MinEnthropy)
-	for x:=0; x<10; x++ {
+	t.Logf("%sScale changing:%s entropy direction changes, and grows", fancy.B, fancy.E[0])
+	pass := ""
+	for x:=0; x<15; x++ {
 		dot := stream.EmitDot()
-		t.Logf("produced %s: %.3f / %.3f weight - with %+v", dot.Elem(), DotWeightFromStreamLen(stream.Len(1)), dot.Weight(), *stream)
-		// stream.Attune()
+		if (stream.Des(1)) > (stream.Mean()+1) { pass = fancy.Clr(1) } else { pass = fancy.Clr(3) }
+		t.Logf("%s | %9.3f mass | %9.3f weight | with %9.3f len | %s%+6.1f%%%s := %9.3f / %0.3f ", dot.Elem(), DotWeightFromStreamLen(stream.Len(1)), dot.Weight(), stream.Len(0), pass, 100*(stream.Des(1))/(stream.Mean()+1)-100, fancy.E[0], (stream.Des(1)), (stream.Mean()+1))
+		stream.Plus(int( float64(plus) * stream.Len(0) ))
+	}
+	stream = BRandNewStream(Elements[0], MinEnthropy)
+	t.Logf("%sScale same:%s entropy direction stay, and grows", fancy.B, fancy.E[0])
+	for x:=0; x<15; x++ {
+		dot := stream.EmitDot()
+		if (stream.Des(1)) > (stream.Mean()+1) { pass = fancy.Clr(1) } else { pass = fancy.Clr(3) }
+		t.Logf("%s | %9.3f mass | %9.3f weight | with %9.3f len | %s%+6.1f%%%s := %9.3f / %0.3f ", dot.Elem(), DotWeightFromStreamLen(stream.Len(1)), dot.Weight(), stream.Len(0), pass, 100*(stream.Des(1))/(stream.Mean()+1)-100, fancy.E[0], (stream.Des(1)), (stream.Mean()+1))
 		stream.ScaleTo(2*int( float64(plus) * stream.Len(0) ))
 	}
+
 }

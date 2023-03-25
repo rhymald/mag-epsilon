@@ -1,9 +1,9 @@
 package common
 
 import (
-	"math" // for dot only
-	"math/rand"
-	"time"
+	// "math" // for dot only
+	// "math/rand"
+	// "time"
 )
 
 type Stream map[string][3]int
@@ -29,13 +29,14 @@ func BRandNewStream(elem string, length int) *Stream {
 
 
 // READ
-func (str *Stream) Mean() float64 { return 3/(1/str.Cre(0)+1/str.Alt(0)+1/str.Des(0)) }
-func (str *Stream) Len(add float64) float64 { return Vector(str.Cre(0),str.Alt(0),str.Des(0))+add }
-func (str *Stream) Harmony() float64 {  return math.Log2(str.Len(0) / math.Max(math.Max(str.Cre(0), str.Alt(0)), str.Des(0))) / math.Log2( math.Sqrt(3) ) }
+// func (str *Stream) Harmony() float64 {  return math.Log2(str.Len(0) / math.Max(math.Max(str.Cre(0), str.Alt(0)), str.Des(0))) / math.Log2( math.Sqrt(3) ) }
 func (str *Stream) Elem() string { for elem, _ := range *str { return elem } ; return "ERR" }
 func (str *Stream) Cre(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][0])/EthalonStreamLength+add }
 func (str *Stream) Alt(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][1])/EthalonStreamLength+add }
 func (str *Stream) Des(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][2])/EthalonStreamLength+add }
+
+func (str *Stream) Mean() float64 { return 3/(1/str.Cre(0)+1/str.Alt(0)+1/str.Des(0)) }
+func (str *Stream) Len(add float64) float64 { return Vector(str.Cre(0),str.Alt(0),str.Des(0))+add }
 
 
 // EDIT
@@ -72,7 +73,7 @@ func (str *Stream) Plus(ll int) float64 {
 
 func (str *Stream) Attune() {
 	if len(ElemList[str.Elem()].Next) == 0 { return }
-	picker := rand.New(rand.NewSource(time.Now().UnixNano())).Intn( len(ElemList[str.Elem()].Next) )
+	picker := Epoch() % len(ElemList[str.Elem()].Next) 
 	newElem := ElemList[str.Elem()].Next[picker]
 	buffer := Stream{ newElem : (*str)[str.Elem()] }
 	*str = buffer

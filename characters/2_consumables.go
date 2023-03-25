@@ -2,7 +2,6 @@ package characters
 
 import (
 	"rhymald/mag-epsilon/balance/common"
-	// "math"
 )
 
 type Consumables struct {
@@ -26,7 +25,7 @@ func (state *Consumables) BurnDot() (string, float64) {
 	return dot.Elem(), dot.Weight()
 }
 
-func (state *Consumables) GetDotFrom(stream *common.Stream) {
+func (state *Consumables) GainDotFrom(stream *common.Stream) {
 	dot := stream.EmitDot() 
 	if dot.Weight() != 0 { (*state).Pool = append((*state).Pool, dot) }
 	state.Heal(1)// common.ChancedRound( 1000 / *&atts.Vitality ) ) 

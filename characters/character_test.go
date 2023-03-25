@@ -15,7 +15,7 @@ func Test_BRandNewStats(t *testing.T){
 		t.Logf("Generated player %s with body, %sand %d streams%s", buffer.GetID(), fancy.Clr(6-len(buffer.Streams)), len(buffer.Streams), fancy.Clr(0))
 		t.Logf("  Body %s %.3f x %.3f x %.3f  | len %.3f", buffer.Body.Elem(), buffer.Body.Cre(0), buffer.Body.Alt(0), buffer.Body.Des(0), buffer.Body.Len(0))
 		for i, each := range buffer.Streams {
-			t.Logf("    - %d'%s %.3f x %.3f x %.3f | harm %.1f%% | len %.3f | %.3f dot", i+1, each.Elem(), each.Cre(0), each.Alt(0), each.Des(0), each.Harmony()*100, each.Len(0), common.DotWeightFromStreamLen(each.Len(1)))
+			t.Logf("    - %d'%s %.3f x %.3f x %.3f | harm ---%% | len %.3f | %.3f dot", i+1, each.Elem(), each.Cre(0), each.Alt(0), each.Des(0),    each.Len(0), common.DotWeightFromStreamLen(each.Len(1)))
 		}
 		t.Logf("-------------------------------------------------------------------------")
 	}
@@ -23,7 +23,11 @@ func Test_BRandNewStats(t *testing.T){
 
 func Test_Character(t *testing.T){
 	var char Character 
-	char.Base = BRandNewStats(common.Physical[2])
+	char.Base = BRandNewStats(common.Physical[common.Epoch()%5])
+	for x:=0; x<10; x++ {
+		char.Base.SproutAStream(common.Elements[common.Epoch()%3])
+		char.Base.GrowAStream(true)
+	}
 	t.Logf("%sCharacter ID:%s %s", fancy.B, fancy.E[0], char.Base.GetID())
 	t.Logf("-------------------------------------------------------------------------")
 	t.Logf("%sID:%s %+v", fancy.B, fancy.E[0], *&char.Base.ID)
@@ -37,16 +41,18 @@ func Test_Character(t *testing.T){
 	t.Logf("-------------------------------------------------------------------------")
 	char.Cons = BrandNewLife()
 	streamCount := len(*&char.Base.Streams)
-	for x:=0; x<24; x++ {
+	start, counter := common.Epoch(), 0
+	for x:=0; x<100; x++ {
 		dots := ""
-		for _, each := range *&char.Cons.Pool { dots = fmt.Sprintf("%s %+v", dots, *each) }
-		t.Logf("%sHP:%s %5.1f%% | %sDots:%s%s", fancy.B, fancy.E[0], float64(*&char.Cons.HP)/10, fancy.B, fancy.E[0], dots)
+		for _, each := range *&char.Cons.Pool { dots = fmt.Sprintf("%s %d%s", dots, (*each)[each.Elem()], each.Elem())}
+		t.Logf("%sHP:%s %5.1f%% | %sDots %+d:%s%s", fancy.B, fancy.E[0], float64(*&char.Cons.HP)/10, fancy.B, counter, fancy.E[0], dots)
 		if x%2 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%3 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%4 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%6 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%9 == 0 { _, _ = char.Cons.BurnDot() }
-		char.Cons.GetDotFrom(*&char.Base.Streams[x%streamCount])
-		if float64(len(*&char.Cons.Pool)) >= *&char.Atts.Poolsize+1 {break}
+		char.Cons.GainDotFrom(*&char.Base.Streams[x%streamCount])
+		counter++
+		if common.Epoch()-start > 10000000000 {break}
 	}
 }
