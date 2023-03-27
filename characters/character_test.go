@@ -21,12 +21,14 @@ func Test_BRandNewStats(t *testing.T){
 	}
 }
 
-func Test_Character(t *testing.T){
+func Test_GainDot_BurnDot(t *testing.T){
+	ups, brands, forks := 0, 0, 0
 	var char Character 
 	char.Base = BRandNewStats(common.Physical[common.Epoch()%5])
-	for x:=0; x<10; x++ {
-		char.Base.SproutAStream(common.Elements[common.Epoch()%3])
-		char.Base.GrowAStream(true)
+	for x:=0; x<ups; x++ { 
+		char.Base.GrowAStream(false) 
+		if common.Rand() < float64(forks)/float64(ups+1) { char.Base.SproutAStream(false) }
+		if common.Rand() < float64(brands)/float64(ups+1) { char.Base.BrandAStream(false) }
 	}
 	t.Logf("%sCharacter ID:%s %s", fancy.B, fancy.E[0], char.Base.GetID())
 	t.Logf("-------------------------------------------------------------------------")
@@ -36,12 +38,13 @@ func Test_Character(t *testing.T){
 	for _, each := range *&char.Base.Streams { streams = fmt.Sprintf("%s %+v", streams, *each) }
 	t.Logf("%sStreams:%s %s", fancy.B, fancy.E[0], streams)
 	t.Logf("-------------------------------------------------------------------------")
-	char.Atts = char.Base.CalculaterAttributes(false)
+	char.Atts = char.Base.CalculaterAttributes()
 	t.Logf("%sAttributes:%s %+v", fancy.B, fancy.E[0], *&char.Atts)
 	t.Logf("-------------------------------------------------------------------------")
-	char.Cons = BrandNewLife()
 	streamCount := len(*&char.Base.Streams)
+	char.Cons = BrandNewLife(streamCount)
 	start, counter := common.Epoch(), 0
+	t.Logf("%sFlocks:%s %+v", fancy.B, fancy.E[0], *(*&char.Cons.Flocks[0]))
 	for x:=0; x<100; x++ {
 		dots := ""
 		for _, each := range *&char.Cons.Pool { dots = fmt.Sprintf("%s %d%s", dots, (*each)[each.Elem()], each.Elem())}
@@ -51,8 +54,8 @@ func Test_Character(t *testing.T){
 		if x%4 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%6 == 0 { _, _ = char.Cons.BurnDot() }
 		if x%9 == 0 { _, _ = char.Cons.BurnDot() }
-		char.Cons.GainDotFrom(*&char.Base.Streams[x%streamCount])
+		char.Cons.GainDotFrom(*&char.Base.Streams[x%streamCount]) ; common.Wait(32)
 		counter++
-		if common.Epoch()-start > 10000000000 {break}
+		if common.Epoch()-start > 1024000000 {break}
 	}
 }

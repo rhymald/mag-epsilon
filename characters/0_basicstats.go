@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"crypto/sha512"
   "encoding/binary"
+	"sync"
 )
 
 type BasicStats struct {
@@ -14,6 +15,7 @@ type BasicStats struct {
 	}
 	Streams []*common.Stream
 	Body *common.Stream
+	sync.Mutex
 } 
 
 
@@ -25,25 +27,52 @@ func BRandNewStats(phys string) *BasicStats {
 	buffer.Body = common.BRandNewStream(phys, 16)
 	buffer.Body.ScaleTo(common.Round(common.EthalonStreamLength*3))
 	count := common.BornLuck(buffer.ID.Entificator)
-	for x:=0; x<count; x++ { buffer.SproutAStream(common.Elements[0]) ; buffer.Streams[x].Attune() }
+	for x:=0; x<count; x++ { buffer.SproutAStream(true) }// ; buffer.Streams[x].Attune() }
 	upgrades := (5-count) * int(common.EthalonStreamLength)/common.GrowStep
-	for x:=0; x<upgrades; x++ { buffer.GrowAStream(false) }
+	for x:=0; x<upgrades; x++ { buffer.GrowAStream(true) }
 	return &buffer
 }
 
 
-// LEVELING
-func (stats *BasicStats) SproutAStream(elem string) {
-	*&stats.Streams = append(*&stats.Streams, common.BRandNewStream(elem, common.MinEnthropy))
+// LEVELING: tbd from flock, not global
+// Destructive. Success will depend on whole default flock 
+// Samevol: Void bonus
+func (stats *BasicStats) SproutAStream(override bool) {
+	if true || override { 
+		stats.Lock()
+		*&stats.Streams = append(*&stats.Streams, common.BRandNewStream(common.Elements[0], common.MinEnthropy))
+		*&stats.ID.Last = common.Epoch()
+		stats.Unlock()
+	}
 }
 
+// Creative. Success depends on stream direction changes
+// Sameshape: Resonance bonus
 func (stats *BasicStats) GrowAStream(override bool) {
 	if len(*&stats.Streams) == 0 {return} // nothing to upg
 	picker := common.Epoch() % len(*&stats.Streams)
 	picked := *&stats.Streams[picker]
-	successChance := picked.Plus( common.GrowStep ) > common.Rand()
-	if successChance || override { 
+	redirectSuccess := picked.Plus( common.GrowStep ) > common.Rand()
+	if ( true && redirectSuccess ) || override { 
+		stats.Lock()
 		*&stats.Streams[picker] = picked
+		*&stats.ID.Last = common.Epoch()
+		stats.Unlock()
+	}
+}
+
+// Alterative. Success will depend on flock's attunement 
+// Sameexp: Mallom/Noise bonus
+func (stats *BasicStats) BrandAStream(override bool) {
+	if len(*&stats.Streams) == 0 {return} // nothing to upg
+	picker := common.Epoch() % len(*&stats.Streams)
+	if true || override { 
+		stats.Lock()
+		picked := *&stats.Streams[picker]
+		picked.Attune()
+		*&stats.Streams[picker] = picked
+		*&stats.ID.Last = common.Epoch()
+		stats.Unlock()
 	}
 }
 

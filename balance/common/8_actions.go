@@ -20,7 +20,7 @@ func NewAction(descriptions ...string) *Action {
 	var buffer Action
 	if len(descriptions) < 1 { return &buffer }
 	description := descriptions[0]
-	for _, each := range descriptions[1:len(descriptions)] { description = fmt.Sprintf("%s|%s", description, each) }
+	for _, each := range descriptions[1:len(descriptions)] { description = fmt.Sprintf("%s[%s]", description, each) }
 	buffer.Description = description
 	*&buffer.Start = Epoch()
 	return &buffer
@@ -28,8 +28,8 @@ func NewAction(descriptions ...string) *Action {
 
 
 // MODIFY
-func (action *Action) Feed(str int, dot *Dot) {
-	food := fmt.Sprintf("%d|%s|%.0f", str, dot.Elem(), 1000*dot.Weight()) // index is always zero, so let it be weight
+func (action *Action) Feed(str string, dot *Dot) {
+	food := fmt.Sprintf("%s|%s|%.0f", str, dot.Elem(), 1000*dot.Weight()) // index is always zero, so let it be weight
 	*&action.ByWith = append(*&action.ByWith, food)
 }
 
@@ -84,6 +84,7 @@ func (action *Action) Where() ([3]int, error) {
 	return buffer, nil
 }
 
+func (action *Action) Describe() string { return (*action).Description }
 func (action *Action) Succeeded() bool { return action.Valid() && ( action.Failed() == false ) }
 func (action *Action) Failed() bool { result := Split( *&action.Result ) ;  return result[0] == "INTERRUPTED" || result[0] == "RUINED" || result[0] == "FAILED" }
 
