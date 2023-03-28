@@ -9,8 +9,8 @@ type Consumables struct {
 	HP int
 	Pool []*common.Dot
 	Flocks []*common.Flock
-	Inbound []*common.Effect
-	Outbound []*common.Action
+	// Inbound []*common.Effect
+	// Outbound []*common.Action
 	sync.Mutex
 }
 

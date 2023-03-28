@@ -9,7 +9,7 @@ import (
 type Stream map[string][3]int
 
 const EthalonStreamLength float64 = 1024
-const BaseStreamLength float64 = 256
+const BaseStreamLength float64 = 512
 const GrowStep float64 = 256
 const MinEnthropy int = 4
 
@@ -36,7 +36,6 @@ func (str *Stream) Cre() float64 { return float64((*str)[str.Elem()][0])/Ethalon
 func (str *Stream) Alt() float64 { return float64((*str)[str.Elem()][1])/EthalonStreamLength }
 func (str *Stream) Des() float64 { return float64((*str)[str.Elem()][2])/EthalonStreamLength }
 
-// func (str *Stream) Harm() float64 {  return str.Mean()*math.Sqrt(3)/str.Len() }
 func (str *Stream) Mean() float64 { return 3/(1/str.Cre()+1/str.Alt()+1/str.Des()) }
 func (str *Stream) Len() float64 { return Vector(str.Cre(),str.Alt(),str.Des()) }
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"rhymald/mag-epsilon/characters"
+	"rhymald/mag-epsilon/tx"
 )
 
 var (

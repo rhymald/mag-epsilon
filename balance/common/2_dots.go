@@ -9,7 +9,7 @@ import (
 
 type Dot map[string]int 
 
-const EthalonDotWeight float64 = 1 / 0.0132437
+const EthalonDotWeight float64 = 1 + 1 / 0.0132437 // min entropy
 
 
 // NEW

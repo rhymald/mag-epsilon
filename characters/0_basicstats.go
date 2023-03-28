@@ -85,5 +85,5 @@ func (stats *BasicStats) GetID() string {
   binary.LittleEndian.PutUint64(in_bytes, uint64(stats.ID.Last))
   sid := fmt.Sprintf("%X", sha512.Sum512(in_bytes))
   pstring, sstring := fmt.Sprintf("%X", pid), fmt.Sprintf("%X", sid)
-	return fmt.Sprintf("%v-%v=%v-%v", pstring[:4], pstring[119:128], sstring[:1], sstring[121:128])
+	return fmt.Sprintf("%v-%v/%v-%v", pstring[:4], pstring[119:128], sstring[:1], sstring[121:128])
 }
