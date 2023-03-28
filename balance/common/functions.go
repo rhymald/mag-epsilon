@@ -32,15 +32,19 @@ func Cbrt(a float64) float64 { return math.Cbrt(a+1)-1 }
 func IsWithin(rand, base float64) bool { 
   entropy := Log10(base)/25
   if (1+0.0132437+entropy)*base+0.001 > rand && (1+0.0132437+entropy)*base-0.001 < rand { return true }
+  if (1+0.0132437+entropy)*(1+0.0132437+entropy)*base+0.001 > rand && (1+0.0132437+entropy)*(1+0.0132437+entropy)*base-0.001 < rand { return true }
   if base/(1+0.0132437+entropy)+0.001 > rand && base/(1+0.0132437+entropy)-0.001 < rand { return true }
+  if base/(1+0.0132437+entropy)/(1+0.0132437+entropy)+0.001 > rand && base/(1+0.0132437+entropy)/(1+0.0132437+entropy)-0.001 < rand { return true }
   if base+0.001 > rand && base-0.001 < rand { return true }
   return false
 }
 func Ntrp(a float64) float64 { 
-  randy := ( Epoch() / 1000000000 ) % 4
+  randy := ( Epoch() / 100000000 ) % 10
   entropy := Log10(a)/25 
-  if randy == 2 { a = a*(1+0.0132437+entropy) }
-  if randy == 0 { a = a/(1+0.0132437+entropy) }
+  if randy == 1 || randy == 4 { a = a*(1+0.0132437+entropy) }
+  if randy == 2 || randy == 3 { a = a*(1+0.0132437+entropy)*(1+0.0132437+entropy) }
+  if randy == 6 || randy == 9 { a = a/(1+0.0132437+entropy) }
+  if randy == 7 || randy == 8 { a = a/(1+0.0132437+entropy)/(1+0.0132437+entropy) }
   return math.Round( a*1000 ) / 1000
 }
 
@@ -63,7 +67,7 @@ func Vector(props ...float64) float64 {
 // FLOAT to INT
 func Round(a float64) int { return int(math.Round(a)) } // for create stream
 func CeilRound(a float64) int { return int(math.Ceil(a)) } // for create stream
-// func FloorRound(a float64) int { return int(math.Floor(a)) } // for filter streams
+func FloorRound(a float64) int { return int(math.Floor(a)) } // for filter streams
 func ChancedRound(a float64) int {
   b,l:=math.Ceil(a),math.Floor(a)
   c:=math.Abs(math.Abs(a)-math.Abs(math.Min(b, l)))

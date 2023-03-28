@@ -16,12 +16,8 @@ const MinEnthropy int = 4
 
 // CREATE
 func BRandNewStream(elem string, length int) *Stream {
-	leng := BaseStreamLength / 2
+	leng := GrowStep
 	if elem == Elements[0] { leng = BaseStreamLength }
-	if elem == Elements[5] { leng = BaseStreamLength / 4 }
-	if elem == Elements[6] { leng = BaseStreamLength / 4 }
-	if elem == Elements[7] { leng = BaseStreamLength / 4 }
-	if elem == Elements[8] { leng = BaseStreamLength / 4 }
 	enthropy := 1/float64(length+1)/float64(length+1)
 	c, a, d := (1+Rand()-Rand())*enthropy, (1+Rand()-Rand())*enthropy, (1+Rand()-Rand())*enthropy
 	for step:=0; step<length-1; step++ { c, a, d = c+(1+Rand()-Rand())*enthropy, a+(1+Rand()-Rand())*enthropy, d+(1+Rand()-Rand())*enthropy }

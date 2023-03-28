@@ -18,7 +18,7 @@ func Test_Actions(t *testing.T){
 		action.Feed(fmt.Sprintf("%d", common.Epoch()%3), dot)
 		stream.Attune()
 		stream.Plus(plus)
-		t.Logf(" - %+v", *action)
+		t.Logf(" - %s: %+v", stream.Elem(), *action)
   }
 	if action.Valid() == false { pass = fancy.Clr(8) } else { pass = fancy.Clr(2) }
 	t.Logf("Interrupted - %sValid: %+v%s (false)", pass, action.Valid(), reset)
@@ -36,7 +36,7 @@ func Test_Actions(t *testing.T){
 		action.Feed(fmt.Sprintf("%d", common.Epoch()%3), dot)
 		stream.Attune()
 		stream.Plus(plus)
-		t.Logf(" - %+v", *action)
+		t.Logf(" - %s: %+v", stream.Elem(), *action)
   }
 	if action.Valid() == false { pass = fancy.Clr(8) } else { pass = fancy.Clr(2) }
 	t.Logf("Low energy - %sValid: %+v%s (false)", pass, action.Valid(), reset)
@@ -53,7 +53,7 @@ func Test_Actions(t *testing.T){
 		action.Feed(fmt.Sprintf("%d", common.Epoch()%3), dot)
 		stream.Attune()
 		stream.Plus(plus)
-		t.Logf(" - %+v", *action)
+		t.Logf(" - %s: %+v", stream.Elem(), *action)
   }
 	if action.Valid() == false { pass = fancy.Clr(8) } else { pass = fancy.Clr(2) }
 	t.Logf("Weak - %sValid: %+v%s (false)", pass, action.Valid(), reset)
@@ -70,7 +70,7 @@ func Test_Actions(t *testing.T){
 		action.Feed(fmt.Sprintf("%d", common.Epoch()%3), dot)
 		stream.Attune()
 		stream.Plus(plus)
-		t.Logf(" - %+v", *action)
+		t.Logf(" - %s: %+v", stream.Elem(), *action)
   }
 	if action.Valid() == false { pass = fancy.Clr(8) } else { pass = fancy.Clr(2) }
 	t.Logf("Self - %sValid: %+v%s (false)", pass, action.Valid(), reset)
@@ -88,7 +88,7 @@ func Test_Actions(t *testing.T){
 		action.Feed(fmt.Sprintf("%d", common.Epoch()%3), dot)
 		stream.Attune()
 		stream.Plus(plus)
-		t.Logf(" - %+v", *action)
+		t.Logf(" - %s: %+v", stream.Elem(), *action)
   }
 	if action.Valid() == false { pass = fancy.Clr(8) } else { pass = fancy.Clr(2) }
 	t.Logf("100%% success - %sValid: %+v%s (false)", pass, action.Valid(), reset)

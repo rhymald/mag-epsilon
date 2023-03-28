@@ -14,6 +14,7 @@ func Test_BRandNewStats(t *testing.T){
 		buffer := BRandNewStats(common.Physical[x%physs])
 		t.Logf("Generated player %s with body, %sand %d streams%s", buffer.GetID(), fancy.Clr(6-len(buffer.Streams)), len(buffer.Streams), fancy.Clr(0))
 		t.Logf("  Body %s %.3f x %.3f x %.3f  | len %.3f", buffer.Body.Elem(), buffer.Body.Cre(), buffer.Body.Alt(), buffer.Body.Des(), buffer.Body.Len())
+		buffer.BrandAStream(false)
 		for i, each := range buffer.Streams {
 			t.Logf("    - %d'%s %.3f x %.3f x %.3f | len %.3f | %.3f dot", i+1, each.Elem(), each.Cre(), each.Alt(), each.Des(), each.Len(), common.DotWeightFromStreamLen(each.Len()+1))
 		}

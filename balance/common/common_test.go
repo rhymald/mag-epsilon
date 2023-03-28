@@ -28,17 +28,19 @@ func Test_EmitDot(t *testing.T){
 	t.Logf("%sScale changing:%s entropy direction changes, and grows", fancy.B, fancy.E[0])
 	pass := ""
 	for x:=0; x<32; x++ {
+		Wait(32)
 		dot := stream.EmitDot()
 		if (stream.Des()+1) > (stream.Mean()+1) { pass = fancy.Clr(1) } else { pass = fancy.Clr(3) }
-		t.Logf("%s | %9.3f mass | %9.3f weight | with %9.3f len | %s%+6.1f%%%s := %9.3f / %0.3f \t%+v %+v", dot.Elem(), DotWeightFromStreamLen(stream.Len()+1), dot.Weight(), stream.Len(), pass, 100*(stream.Des()+1)/(stream.Mean()+1)-100, fancy.E[0], (stream.Des()+1), (stream.Mean()+1), *dot, *stream)
+		t.Logf("%s | mass %9.3f %+5.1f%%  %0.3f  \tweight | with %9.3f len | %s%+6.1f%%%s := %9.3f / %0.3f \t%+v\t%+v", dot.Elem(), DotWeightFromStreamLen(stream.Len()+1), 100-(DotWeightFromStreamLen(stream.Len()+1))/dot.Weight()*100, dot.Weight(), stream.Len(), pass, 100*(stream.Des()+1)/(stream.Mean()+1)-100, fancy.E[0], (stream.Des()+1), (stream.Mean()+1), (*dot)[dot.Elem()], (*stream)[stream.Elem()])
 		stream.Plus( (plus) )
 	}
 	stream = BRandNewStream(Elements[0], MinEnthropy)
 	t.Logf("%sScale same:%s entropy direction stay, and grows", fancy.B, fancy.E[0])
 	for x:=0; x<16; x++ {
+		Wait(32)
 		dot := stream.EmitDot()
 		if (stream.Des()+1) > (stream.Mean()+1) { pass = fancy.Clr(1) } else { pass = fancy.Clr(3) }
-		t.Logf("%s | %9.3f mass | %9.3f weight | with %9.3f len | %s%+6.1f%%%s := %9.3f / %0.3f \t%+v %+v", dot.Elem(), DotWeightFromStreamLen(stream.Len()+1), dot.Weight(), stream.Len(), pass, 100*(stream.Des()+1)/(stream.Mean()+1)-100, fancy.E[0], (stream.Des()+1), (stream.Mean()+1), *dot, *stream)
+		t.Logf("%s | mass %9.3f %+5.1f%%  %0.3f  \tweight | with %9.3f len | %s%+6.1f%%%s := %9.3f / %0.3f \t%+v\t%+v", dot.Elem(), DotWeightFromStreamLen(stream.Len()+1), 100-(DotWeightFromStreamLen(stream.Len()+1))/dot.Weight()*100, dot.Weight(), stream.Len(), pass, 100*(stream.Des()+1)/(stream.Mean()+1)-100, fancy.E[0], (stream.Des()+1), (stream.Mean()+1), (*dot)[dot.Elem()], (*stream)[stream.Elem()])
 		stream.ScaleTo( 2*(stream.Len()) )
 	}
 }
