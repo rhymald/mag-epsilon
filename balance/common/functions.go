@@ -12,8 +12,14 @@ import (
 
 // STRINGS
 func Split(what string) []string { return strings.Split(what, "|") }
-// XYZ+RRR from str
-// str to XYZ+RRR
+func ParseTags(what string) map[string]string {
+  buffer, tags := make(map[string]string), Split(what)
+  for _, each := range tags { 
+    row := strings.Split(each, "=") 
+    if len(row) == 2 { buffer[row[0]] = row[1] } 
+  }
+  return buffer
+}
 
 
 // FLOATS
@@ -26,7 +32,7 @@ func Cbrt(a float64) float64 { return math.Cbrt(a+1)-1 }
 func IsWithin(rand, base float64) bool { 
   entropy := Log10(base)/25
   if (1+0.0132437+entropy)*base+0.001 > rand && (1+0.0132437+entropy)*base-0.001 < rand { return true }
-  if (1-0.0132437-entropy)*base+0.001 > rand && (1-0.0132437-entropy)*base-0.001 < rand { return true }
+  if base/(1+0.0132437+entropy)+0.001 > rand && base/(1+0.0132437+entropy)-0.001 < rand { return true }
   if base+0.001 > rand && base-0.001 < rand { return true }
   return false
 }
@@ -34,7 +40,7 @@ func Ntrp(a float64) float64 {
   randy := ( Epoch() / 1000000000 ) % 4
   entropy := Log10(a)/25 
   if randy == 2 { a = a*(1+0.0132437+entropy) }
-  if randy == 0 { a = a*(1-0.0132437-entropy) }
+  if randy == 0 { a = a/(1+0.0132437+entropy) }
   return math.Round( a*1000 ) / 1000
 }
 

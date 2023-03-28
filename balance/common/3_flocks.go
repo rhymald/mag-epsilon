@@ -18,6 +18,8 @@ type Flock struct {
 	Threshold map[string]float64
 }
 
+
+// CREATE
 func DefaultFlock(count int) *Flock {
 	var buffer Flock
 	buffer.ID = Epoch()

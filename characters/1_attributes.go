@@ -21,10 +21,6 @@ func (stats *BasicStats) CalculaterAttributes() *Attributes {
 	buffer.Resists = make(map[string]float64)
 	buffer.Vitality = balance.Attributes_Vitality_FromBodyStream((*stats).Body)
 	buffer.Poolsize, buffer.Resists = balance.Attributes_PoolSizeAndResistances_FromEnergyStreams((*stats).Streams)
-	// for _, each := range *&stats.Streams { 
-	// 	buffer.Poolsize += (common.Cbrt(each.Mean()) +1) * common.EthalonStreamLength/float64(common.GrowStep)
-	// 	if each.Elem() != common.Elements[0] { buffer.Resists[each.Elem()] += each.Mean()+1 }
-	// }
 	buffer.XYZ = LoginPoints[stats.ID.Last%len(LoginPoints)] // To be moved as teleport func
 	return &buffer
 }

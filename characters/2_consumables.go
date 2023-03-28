@@ -9,26 +9,28 @@ type Consumables struct {
 	HP int
 	Pool []*common.Dot
 	Flocks []*common.Flock
+	Inbound []*common.Effect
+	Outbound []*common.Action
 	sync.Mutex
 }
 
-// CREATE
+// CREATE | LOGIN
 func BrandNewLife(streams int) *Consumables {
 	var buffer Consumables
-	buffer.HP = 618
+	buffer.HP = 382
 	buffer.Flocks = append(buffer.Flocks, common.DefaultFlock(streams))
 	return &buffer
 }
 
 
 // DOTS
-func (state *Consumables) BurnDot() (string, float64) {
-	if len((*state).Pool) == 0 { return common.Elements[0], 0 }
+func (state *Consumables) BurnDot() common.Dot {
+	if len((*state).Pool) == 0 { return common.Dot{} }
 	dot := *&state.Pool[0]
 	state.Lock()
 	(*state).Pool = state.Pool[1:len((*state).Pool)]
 	state.Unlock()
-	return dot.Elem(), dot.Weight()
+	return *dot
 }
 
 func (state *Consumables) GainDotFrom(stream *common.Stream) {

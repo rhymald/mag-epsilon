@@ -25,10 +25,10 @@ func BRandNewStats(phys string) *BasicStats {
 	buffer.ID.Entificator = common.Epoch()
 	buffer.ID.Last = common.Epoch()
 	buffer.Body = common.BRandNewStream(phys, 16)
-	buffer.Body.ScaleTo(common.Round(common.EthalonStreamLength*3))
+	buffer.Body.ScaleTo(3)
 	count := common.BornLuck(buffer.ID.Entificator)
 	for x:=0; x<count; x++ { buffer.SproutAStream(true) }// ; buffer.Streams[x].Attune() }
-	upgrades := (5-count) * int(common.EthalonStreamLength)/common.GrowStep
+	upgrades := (5-count) * int(common.EthalonStreamLength/common.GrowStep)
 	for x:=0; x<upgrades; x++ { buffer.GrowAStream(true) }
 	return &buffer
 }
@@ -52,7 +52,7 @@ func (stats *BasicStats) GrowAStream(override bool) {
 	if len(*&stats.Streams) == 0 {return} // nothing to upg
 	picker := common.Epoch() % len(*&stats.Streams)
 	picked := *&stats.Streams[picker]
-	redirectSuccess := picked.Plus( common.GrowStep ) > common.Rand()
+	redirectSuccess := picked.Plus( common.GrowStep/common.EthalonStreamLength ) > common.Rand()
 	if ( true && redirectSuccess ) || override { 
 		stats.Lock()
 		*&stats.Streams[picker] = picked
@@ -85,5 +85,5 @@ func (stats *BasicStats) GetID() string {
   binary.LittleEndian.PutUint64(in_bytes, uint64(stats.ID.Last))
   sid := fmt.Sprintf("%X", sha512.Sum512(in_bytes))
   pstring, sstring := fmt.Sprintf("%X", pid), fmt.Sprintf("%X", sid)
-	return fmt.Sprintf("%v-%v-%v-%v", pstring[:4], pstring[119:128], sstring[:1], sstring[121:128])
+	return fmt.Sprintf("%v-%v=%v-%v", pstring[:4], pstring[119:128], sstring[:1], sstring[121:128])
 }

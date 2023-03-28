@@ -28,14 +28,14 @@ func InitEpoch(epoch int) (map[string]*Element, map[string]*Element) {
 		Elements[0]: &Element{Aka: "Common"},
 		Elements[1]: &Element{Aka: "Air"},
 		Elements[2]: &Element{Aka: "Fire"},
-		// Epoch 2: +alt +cre - less focus on element, more schools, +fractals series
+		// Epoch 2: +alt +cre - less focus on element, more schools, +fractals series: x2 complexity
 		Elements[3]: &Element{Aka: "Earth"},
 		Elements[4]: &Element{Aka: "Water"},
-		// Epoch 3: enslaved wild shadows learn to live with humans
+		// Epoch 3: enslaved wild shadows learn to live with humans: x3 complexity
 		Elements[5]: &Element{Aka: "Void"},
 		// Epoch 4: rhyxxix break out - ethernal shadows release
 		Elements[6]: &Element{Aka: "Mallom"},
-		// Epoch 5: mind controllers on 4, annihilators from 1
+		// Epoch 5: mind controllers on 4, annihilators on 1
 		Elements[7]: &Element{Aka: "Noise"},
 		Elements[8]: &Element{Aka: "Resonance"},
 	}
@@ -51,11 +51,13 @@ func InitEpoch(epoch int) (map[string]*Element, map[string]*Element) {
 		Physical[4]: &Element{Aka: "Forged"}, 
 	}
 
+
 	// EPOCH 0: simplest energy jinxing - could not distinguish energy kinds: nature/element
 	elements[Elements[0]].AllowFractal("Jinx")  // upgradable to any basic
 	physicals[Physical[1]].AllowFractal("Punch")  // upgradable to any basic
 	physicals[Physical[2]].AllowFractal("Sting")  // upgradable to any basic
 	if epoch == 0 { return elements, physicals }
+
 
 	// EPOCH 1: before Echaen: destruction mostly, 
 	// air by feathers, fire by humans
@@ -64,6 +66,7 @@ func InitEpoch(epoch int) (map[string]*Element, map[string]*Element) {
 	elements[Elements[2]].AllowAttunes(Elements[0:1])  // used by humans
 	if epoch == 1 { return elements, physicals }
 	
+
 	// return LATEST EPOCH by defult
 	return elements, physicals
 }

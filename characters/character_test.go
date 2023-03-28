@@ -13,9 +13,9 @@ func Test_BRandNewStats(t *testing.T){
 	for x:=0; x<10; x++ {
 		buffer := BRandNewStats(common.Physical[x%physs])
 		t.Logf("Generated player %s with body, %sand %d streams%s", buffer.GetID(), fancy.Clr(6-len(buffer.Streams)), len(buffer.Streams), fancy.Clr(0))
-		t.Logf("  Body %s %.3f x %.3f x %.3f  | len %.3f", buffer.Body.Elem(), buffer.Body.Cre(0), buffer.Body.Alt(0), buffer.Body.Des(0), buffer.Body.Len(0))
+		t.Logf("  Body %s %.3f x %.3f x %.3f  | len %.3f", buffer.Body.Elem(), buffer.Body.Cre(), buffer.Body.Alt(), buffer.Body.Des(), buffer.Body.Len())
 		for i, each := range buffer.Streams {
-			t.Logf("    - %d'%s %.3f x %.3f x %.3f | harm ---%% | len %.3f | %.3f dot", i+1, each.Elem(), each.Cre(0), each.Alt(0), each.Des(0),    each.Len(0), common.DotWeightFromStreamLen(each.Len(1)))
+			t.Logf("    - %d'%s %.3f x %.3f x %.3f | len %.3f | %.3f dot", i+1, each.Elem(), each.Cre(), each.Alt(), each.Des(), each.Len(), common.DotWeightFromStreamLen(each.Len()+1))
 		}
 		t.Logf("-------------------------------------------------------------------------")
 	}
@@ -49,12 +49,12 @@ func Test_GainDot_BurnDot(t *testing.T){
 		dots := ""
 		for _, each := range *&char.Cons.Pool { dots = fmt.Sprintf("%s %d%s", dots, (*each)[each.Elem()], each.Elem())}
 		t.Logf("%sHP:%s %5.1f%% | %sDots %+d:%s%s", fancy.B, fancy.E[0], float64(*&char.Cons.HP)/10, fancy.B, counter, fancy.E[0], dots)
-		if x%2 == 0 { _, _ = char.Cons.BurnDot() }
-		if x%3 == 0 { _, _ = char.Cons.BurnDot() }
-		if x%4 == 0 { _, _ = char.Cons.BurnDot() }
-		if x%6 == 0 { _, _ = char.Cons.BurnDot() }
-		if x%9 == 0 { _, _ = char.Cons.BurnDot() }
-		char.Cons.GainDotFrom(*&char.Base.Streams[x%streamCount]) ; common.Wait(32)
+		if x%2 == 0 { _ = char.Cons.BurnDot() }
+		if x%3 == 0 { _ = char.Cons.BurnDot() }
+		if x%4 == 0 { _ = char.Cons.BurnDot() }
+		if x%6 == 0 { _ = char.Cons.BurnDot() }
+		if x%9 == 0 { _ = char.Cons.BurnDot() }
+		char.Cons.GainDotFrom(*&char.Base.Streams[x%streamCount]) ; common.Wait(128)
 		counter++
 		if common.Epoch()-start > 1024000000 {break}
 	}

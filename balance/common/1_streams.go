@@ -1,7 +1,7 @@
 package common
 
 import (
-	// "math" // for dot only
+	"math" // for dot only
 	// "math/rand"
 	// "time"
 )
@@ -9,8 +9,8 @@ import (
 type Stream map[string][3]int
 
 const EthalonStreamLength float64 = 1024
-const BaseStreamLength float64 = 512
-const GrowStep int = 128
+const BaseStreamLength float64 = 256
+const GrowStep float64 = 256
 const MinEnthropy int = 4
 
 
@@ -19,6 +19,8 @@ func BRandNewStream(elem string, length int) *Stream {
 	leng := BaseStreamLength / 2
 	if elem == Elements[0] { leng = BaseStreamLength }
 	if elem == Elements[5] { leng = BaseStreamLength / 4 }
+	if elem == Elements[6] { leng = BaseStreamLength / 4 }
+	if elem == Elements[7] { leng = BaseStreamLength / 4 }
 	if elem == Elements[8] { leng = BaseStreamLength / 4 }
 	enthropy := 1/float64(length+1)/float64(length+1)
 	c, a, d := (1+Rand()-Rand())*enthropy, (1+Rand()-Rand())*enthropy, (1+Rand()-Rand())*enthropy
@@ -29,19 +31,19 @@ func BRandNewStream(elem string, length int) *Stream {
 
 
 // READ
-// func (str *Stream) Harmony() float64 {  return math.Log2(str.Len(0) / math.Max(math.Max(str.Cre(0), str.Alt(0)), str.Des(0))) / math.Log2( math.Sqrt(3) ) }
 func (str *Stream) Elem() string { for elem, _ := range *str { return elem } ; return "ERR" }
-func (str *Stream) Cre(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][0])/EthalonStreamLength+add }
-func (str *Stream) Alt(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][1])/EthalonStreamLength+add }
-func (str *Stream) Des(add float64) float64 { buf := *str ; return float64(buf[str.Elem()][2])/EthalonStreamLength+add }
+func (str *Stream) Cre() float64 { return float64((*str)[str.Elem()][0])/EthalonStreamLength }
+func (str *Stream) Alt() float64 { return float64((*str)[str.Elem()][1])/EthalonStreamLength }
+func (str *Stream) Des() float64 { return float64((*str)[str.Elem()][2])/EthalonStreamLength }
 
-func (str *Stream) Mean() float64 { return 3/(1/str.Cre(0)+1/str.Alt(0)+1/str.Des(0)) }
-func (str *Stream) Len(add float64) float64 { return Vector(str.Cre(0),str.Alt(0),str.Des(0))+add }
+// func (str *Stream) Harm() float64 {  return str.Mean()*math.Sqrt(3)/str.Len() }
+func (str *Stream) Mean() float64 { return 3/(1/str.Cre()+1/str.Alt()+1/str.Des()) }
+func (str *Stream) Len() float64 { return Vector(str.Cre(),str.Alt(),str.Des()) }
 
 
 // EDIT
 func (str *Stream) RandShapeAs(cc, aa, dd int) {
-	keepLen := str.Len(0) * EthalonStreamLength
+	keepLen := str.Len() * EthalonStreamLength
 	entroc, entroa, entrod := 1/float64(cc+1)/float64(cc+1), 1/float64(aa+1)/float64(aa+1), 1/float64(dd+1)/float64(dd+1)
 	c, a, d := (1+Rand()-Rand())*entroc, (1+Rand()-Rand())*entroa, (1+Rand()-Rand())*entrod 
 	for step:=0; step<cc-1; step++ { c += entroc*(1+Rand()-Rand()) }
@@ -51,23 +53,25 @@ func (str *Stream) RandShapeAs(cc, aa, dd int) {
 	*str = Stream{ str.Elem(): [3]int{ Round(c*keepLen*modifier), Round(a*keepLen*modifier), Round(d*keepLen*modifier) }}
 }
 
-func (str *Stream) ScaleTo(ll int) {
-	multiplier := float64(ll) / EthalonStreamLength / str.Len(0)
-	c, a, d := str.Cre(0)*EthalonStreamLength, str.Alt(0)*EthalonStreamLength, str.Des(0)*EthalonStreamLength
-	*str = Stream{ str.Elem(): [3]int{ Round(c*multiplier), Round(a*multiplier), Round(d*multiplier) }}
+// NEED to get fixed from int
+func (str *Stream) ScaleTo(newlen float64) {
+	multiplier := math.Round(newlen*EthalonStreamLength/GrowStep)/EthalonStreamLength*GrowStep / str.Len()
+	c, a, d := str.Cre()*EthalonStreamLength, str.Alt()*EthalonStreamLength, str.Des()*EthalonStreamLength
+	*str = Stream{ str.Elem(): [3]int{ CeilRound(c*multiplier), CeilRound(a*multiplier), CeilRound(d*multiplier) }}
 }
 
-func (str *Stream) Plus(ll int) float64 {
+// NEED to get fixed from int
+func (str *Stream) Plus(ll float64) float64 {
 	increasement := BRandNewStream(str.Elem(), MinEnthropy)
-	increasement.ScaleTo(ll)
-	newLen := str.Len(0)*EthalonStreamLength+float64(ll)
+	increasement.ScaleTo( ll * float64(EthalonStreamLength) )
+	newLen := math.Round((str.Len()+ll)*EthalonStreamLength/GrowStep)/EthalonStreamLength*GrowStep
 	*str = Stream{ str.Elem(): [3]int{ 
-		Round((str.Cre(0)+increasement.Cre(0))*EthalonStreamLength), 
-		Round((str.Alt(0)+increasement.Alt(0))*EthalonStreamLength), 
-		Round((str.Des(0)+increasement.Des(0))*EthalonStreamLength), 
+		Round((str.Cre()+increasement.Cre())*EthalonStreamLength), 
+		Round((str.Alt()+increasement.Alt())*EthalonStreamLength), 
+		Round((str.Des()+increasement.Des())*EthalonStreamLength), 
 	}}
-	multiplier := str.Len(0)*EthalonStreamLength / newLen
-	str.ScaleTo(Round(newLen))
+	multiplier := str.Len()*EthalonStreamLength / newLen
+	str.ScaleTo(newLen)
 	return multiplier
 }
 
