@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"errors"
 	"rhymald/mag-epsilon/balance/common"
+	"rhymald/mag-epsilon/characters"
 	"strconv"
 )
 
@@ -16,69 +17,72 @@ import (
 //  Regen-, Move- snapshots
 
 type Action struct { 
-	Source string 
 	Start int // when start
-	End int // when it collided
+	Char string 
+	Source *characters.BasicStats 
 	Result string // interruptedBy, failed/successRate, fatal overheat 
-	ByWith map[string][]string // streams/flocks, fractals/schemes, tools
+	End int // when it collided
+	ByWith map[int][]string // streams/flocks, fractals/schemes, tools
 }
 
 
 // CREATE
-func NewAction(id ...string) *Action {
+func NewAction(what string, id *characters.BasicStats) *Action {
 	var buffer Action
-	if len(id[0]) != 24 { return &buffer }
-	// description := fmt.Sprintf("ID=%0X", Epoch()%(256*256*256))
-	// for _, each := range descriptions { description = fmt.Sprintf("%s|%s", description, each) }
-	buffer.Source = id[0]
-	buffer.ByWith = make(map[string][]string)
+	if len(id.GetID()) != 24 { return &buffer }
+	buffer.Source = id
+	buffer.Char = id.GetID()
+	buffer.ByWith = make(map[int][]string)
+	buffer.Result = fmt.Sprintf("%s|Created", what)
 	buffer.Start = common.Epoch()
 	return &buffer
 }
 
 
 // MODIFY
-func (action *Action) Feed(key string, dot *common.Dot) {
+func (action *Action) Feed(key int, dot *common.Dot) {
+	*&action.End = common.Epoch() - *&action.Start 
 	food := *&action.ByWith 
 	elfood := food[key]
-	elfood = append(elfood, fmt.Sprintf("%s|%d", dot.Elem(), (*dot)[dot.Elem()] ))
+	elfood = append(elfood, dot.ToStr())
 	food[key] = elfood
 	*&action.ByWith = food
+	*&action.Result = fmt.Sprintf("%s|Feeding #%d with %s%d=%0.3f", common.Split(*&action.Result)[0], key, dot.Elem(), (*dot)[dot.Elem()], dot.Weight())
 }
 
-func (action *Action) Finish(target float64, dots, needed int, place, direction [3]int) {
+func (action *Action) Finish(target float64, lastStr, needed int, place, direction [3]int) {
+	dots := 0
+	for _, each := range *&action.ByWith { dots += len(each) }
+	what := common.Split(*&action.Result)[0]
 	*&action.End = common.Epoch()
 	*&action.Start = - *&action.End + *&action.Start
-	rate := common.ChancedRound(common.Rand()*1000)
-	targ := common.ChancedRound( float64(dots)/float64(needed) *1000)
-	success := rate <= targ
-	str := -1
+	drate := common.ChancedRound(common.Rand()*float64(needed))
+	dtarg := common.ChancedRound( float64(dots) )
+	qrate := common.ChancedRound(common.Rand()*1000)
+	qtarg := common.ChancedRound(target*1000)
+	success := drate <= dtarg && qrate < qtarg
+	str := lastStr
 	if success {
-		rate = common.ChancedRound(common.Rand()*1000)
-		targ = common.ChancedRound(target*1000)
-		success = rate <= targ	
-		if success {
-			leng := common.Vector(float64(direction[0]), float64(direction[1]), float64(direction[2]))
-			x,y,z := 0.0, 0.0, 0.0
-			if leng != 0 { 
-				x = float64(direction[0])/leng * 1000
-				y = float64(direction[1])/leng * 1000
-				z = float64(direction[2])/leng * 1000
-			}
-			*&action.Result = fmt.Sprintf("%d|%d|to|%.0f|%.0f|%.0f|from|%d|%d|%d", rate, targ, x, y, z, place[0], place[1], place[2])
-		} else {
-			*&action.Result = fmt.Sprintf("FAILED|%d|%d|for|%d|at|%d|%d|%d", rate, targ, str, place[0], place[1], place[2])
+		leng := common.Vector(float64(direction[0]), float64(direction[1]), float64(direction[2]))
+		x,y,z := 0.0, 0.0, 0.0
+		if leng != 0 { 
+			x = float64(direction[0])/leng * 1000
+			y = float64(direction[1])/leng * 1000
+			z = float64(direction[2])/leng * 1000
 		}
+		*&action.Result = fmt.Sprintf("%s|[%d<=%d][%d<=%d/%d]|to|%.0f|%.0f|%.0f|from|%d|%d|%d", what, qrate, qtarg, drate, dots, needed, x, y, z, place[0], place[1], place[2])
 	} else {
-		*&action.Result = fmt.Sprintf("RUINED|%d|%d|by|%d|at|%d|%d|%d", dots, needed, str, place[0], place[1], place[2])
+		if drate > dtarg { *&action.Result = fmt.Sprintf("RUINED|%s|[%d<=%d][%d<=%d/%d]|by|%d|at|%d|%d|%d", what, qrate, qtarg, drate,  dots, needed, str, place[0], place[1], place[2]) }
+		if qrate > qtarg { *&action.Result = fmt.Sprintf("FAILED|%s|[%d<=%d][%d<=%d/%d]|for|%d|at|%d|%d|%d", what, qrate, qtarg, drate, dots, needed, str, place[0], place[1], place[2]) }
 	}
 }
 
 func (action *Action) Interrupt(bywhat string, where [3]int) {
+	what := common.Split(*&action.Result)[0]
 	*&action.End = common.Epoch()
 	*&action.Start = - *&action.End + *&action.Start
 	if len(common.Split(bywhat)) < 1 { bywhat = "UNKNOWN" }
-	*&action.Result = fmt.Sprintf("INTERRUPTED|by|%s|at|%d|%d|%d", bywhat, where[0], where[1], where[2])
+	*&action.Result = fmt.Sprintf("INTERRUPTED|%s|by|%s|at|%d|%d|%d", what, bywhat, where[0], where[1], where[2])
 }
 
 
@@ -115,7 +119,7 @@ func (action *Action) Valid() bool {
 	finishCheck := *&action.End > 0
 	if finishCheck == false { return false }
  	result := common.Split( *&action.Result ) 
-	lenCheck := len(result) == 7 || len(result) == 9 || len(result) == 10
+	lenCheck := len(result) == 8 || len(result) == 9 || len(result) == 10
 	if lenCheck == false { return false }
 	coordCheck, vectorCheck := false, false
 	_, vector, err := action.Where() ; if err == nil { coordCheck = true } else { return false }

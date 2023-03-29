@@ -12,14 +12,14 @@ import (
 
 // STRINGS
 func Split(what string) []string { return strings.Split(what, "|") }
-func ParseTags(what string) map[string]string {
-  buffer, tags := make(map[string]string), Split(what)
-  for _, each := range tags { 
-    row := strings.Split(each, "=") 
-    if len(row) == 2 { buffer[row[0]] = row[1] } 
-  }
-  return buffer
-}
+// func ParseTags(what string) map[string]string {
+//   buffer, tags := make(map[string]string), Split(what)
+//   for _, each := range tags { 
+//     row := strings.Split(each, "=") 
+//     if len(row) == 2 { buffer[row[0]] = row[1] } 
+//   }
+//   return buffer
+// }
 
 
 // FLOATS
@@ -77,7 +77,7 @@ func ChancedRound(a float64) int {
 }
 
 func BornLuck(time int) int { if time%10 == 0 {return 2} else if time%10 == 9 {return 5} else if time%10 < 5 {return 3} else {return 4} ; return 0}
-func Epoch() int { return int(time.Now().UnixNano()) }
+func Epoch() int { return int(time.Now().UnixNano())/1000000 }
 
 // TIME
 func Wait(ms float64) { time.Sleep( time.Millisecond * time.Duration( ms )) }

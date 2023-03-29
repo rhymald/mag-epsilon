@@ -71,7 +71,7 @@ func InitEpoch(epoch int) (map[string]*Element, map[string]*Element) {
 	
 
 	// EPOCH 2: schools
-	// air by feathers, fire by humans
+	// more fractals, more schools, more elements
 	elements[Elements[0]].AllowAttunes(Elements[3:5])  // upgradable to any basic
 	elements[Elements[3]].AllowAttunes(Elements[0:1])  // used by feathers
 	elements[Elements[4]].AllowAttunes(Elements[0:1])  // used by feathers
@@ -86,6 +86,10 @@ func InitEpoch(epoch int) (map[string]*Element, map[string]*Element) {
 	elements[Elements[6]].AllowAttunes(Elements[4:5])  // used by humans
 	elements[Elements[6]].AllowAttunes(Elements[0:1])  // used by humans
 	if epoch == 2 { return elements, physicals }
+
+
+	// EPOCH 2+1: more fractals
+	if epoch == 3 { return elements, physicals }
 
 
 	// return LATEST EPOCH by defult
