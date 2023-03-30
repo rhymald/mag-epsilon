@@ -24,13 +24,12 @@ func (str *Stream) EmitDot() *Dot { return &Dot{ str.Elem(): CeilRound( EthalonD
 func (dot *Dot) Weight() float64 { return float64((*dot)[dot.Elem()]+MinWeight) / EthalonDotWeight }
 func (dot *Dot) Elem() string { for elem, _ := range *dot { return elem } ; return "ERR" }
 func (dot *Dot) ToStr() string { return fmt.Sprintf("%s|%d", dot.Elem(), (*dot)[dot.Elem()] ) }
-func (dot *Dot) FromStr(str string) error {
-	var new Dot 
+func ParseDotFromStr(str string) (*Dot, error) {
+	var new Dot
 	params := Split(str)
-	if len(Split(str)) != 2 { return errors.New("Can't parse. That is not a dot!")} 
+	if len(Split(str)) != 2 { return &new, errors.New("Can't parse. That is not a dot!")} 
 	w, err := strconv.Atoi(params[1])
-	if err != nil { return err }
-	new[params[0]] = w
-	*dot = new
-	return nil
+	if err != nil { return &new, err }
+	new = Dot{ params[0]: w }
+	return &new, nil
 }

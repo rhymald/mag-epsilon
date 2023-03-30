@@ -17,10 +17,11 @@ import (
 //  Regen-, Move- snapshots
 
 type Action struct { 
+	// Name+tags
 	Start int // when start
 	Char string 
 	Source *characters.BasicStats 
-	Result string // interruptedBy, failed/successRate, fatal overheat 
+	Result string // -name, interruptedBy, failed/successRate, fatal overheat 
 	End int // when it collided
 	ByWith map[int][]string // streams/flocks, fractals/schemes, tools
 }
@@ -60,7 +61,8 @@ func (action *Action) Finish(target float64, lastStr, needed int, place, directi
 	dtarg := common.ChancedRound( float64(dots) )
 	qrate := common.ChancedRound(common.Rand()*1000)
 	qtarg := common.ChancedRound(target*1000)
-	success := drate <= dtarg && qrate < qtarg
+	success := qrate <= qtarg && drate <= dtarg
+	// success := drate*qrate <= dtarg*qtarg
 	str := lastStr
 	if success {
 		leng := common.Vector(float64(direction[0]), float64(direction[1]), float64(direction[2]))
@@ -77,6 +79,7 @@ func (action *Action) Finish(target float64, lastStr, needed int, place, directi
 	}
 }
 
+//+OVERHEAT with random directions
 func (action *Action) Interrupt(bywhat string, where [3]int) {
 	what := common.Split(*&action.Result)[0]
 	*&action.End = common.Epoch()
