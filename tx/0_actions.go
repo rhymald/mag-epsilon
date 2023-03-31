@@ -17,7 +17,8 @@ import (
 //  Regen-, Move- snapshots
 
 type Action struct { 
-	// Name+tags
+	ID string // elem|name 
+	Tags []string // tags
 	Start int // when start
 	Char string 
 	Source *characters.BasicStats 
@@ -28,13 +29,15 @@ type Action struct {
 
 
 // CREATE
-func NewAction(what string, id *characters.BasicStats) *Action {
+func NewAction(what, tags string, id *characters.BasicStats) *Action {
 	var buffer Action
 	if len(id.GetID()) != 24 { return &buffer }
 	buffer.Source = id
 	buffer.Char = id.GetID()
+	buffer.ID = what
+	buffer.Tags = common.Split(tags)
 	buffer.ByWith = make(map[int][]string)
-	buffer.Result = fmt.Sprintf("%s|Created", what)
+	buffer.Result = fmt.Sprintf("Created")
 	buffer.Start = common.Epoch()
 	return &buffer
 }
@@ -54,15 +57,14 @@ func (action *Action) Feed(key int, dot *common.Dot) {
 func (action *Action) Finish(target float64, lastStr, needed int, place, direction [3]int) {
 	dots := 0
 	for _, each := range *&action.ByWith { dots += len(each) }
-	what := common.Split(*&action.Result)[0]
 	*&action.End = common.Epoch()
 	*&action.Start = - *&action.End + *&action.Start
 	drate := common.ChancedRound(common.Rand()*float64(needed))
 	dtarg := common.ChancedRound( float64(dots) )
 	qrate := common.ChancedRound(common.Rand()*1000)
 	qtarg := common.ChancedRound(target*1000)
-	success := qrate <= qtarg && drate <= dtarg
-	// success := drate*qrate <= dtarg*qtarg
+	// success := qrate <= qtarg && drate <= dtarg
+	success := drate*qrate <= dtarg*qtarg
 	str := lastStr
 	if success {
 		leng := common.Vector(float64(direction[0]), float64(direction[1]), float64(direction[2]))
@@ -72,20 +74,20 @@ func (action *Action) Finish(target float64, lastStr, needed int, place, directi
 			y = float64(direction[1])/leng * 1000
 			z = float64(direction[2])/leng * 1000
 		}
-		*&action.Result = fmt.Sprintf("%s|[%d<=%d][%d<=%d/%d]|to|%.0f|%.0f|%.0f|from|%d|%d|%d", what, qrate, qtarg, drate, dots, needed, x, y, z, place[0], place[1], place[2])
+		label := "✅ " ; if qrate > qtarg { label = "🍀 " } ; if drate > dtarg { label = "🔋 " }
+		*&action.Result = fmt.Sprintf("%s| %03d<%03d %02d<%02d/%02d | to:|%3.0f|%3.0f|%3.0f| from:|%d|%d|%d", label, qrate, qtarg, drate, dots, needed, x, y, z, place[0], place[1], place[2])
 	} else {
-		if drate > dtarg { *&action.Result = fmt.Sprintf("RUINED|%s|[%d<=%d][%d<=%d/%d]|by|%d|at|%d|%d|%d", what, qrate, qtarg, drate,  dots, needed, str, place[0], place[1], place[2]) }
-		if qrate > qtarg { *&action.Result = fmt.Sprintf("FAILED|%s|[%d<=%d][%d<=%d/%d]|for|%d|at|%d|%d|%d", what, qrate, qtarg, drate, dots, needed, str, place[0], place[1], place[2]) }
+		if drate > dtarg { *&action.Result = fmt.Sprintf("🪫 | %03d<%03d %02d<%02d/%02d | by:|%d| at:|%d|%d|%d", qrate, qtarg, drate,  dots, needed, str, place[0], place[1], place[2]) }
+		if qrate > qtarg { *&action.Result = fmt.Sprintf("🎲 | %03d<%03d %02d<%02d/%02d | for:|%d| at:|%d|%d|%d", qrate, qtarg, drate, dots, needed, str, place[0], place[1], place[2]) }
 	}
 }
 
 //+OVERHEAT with random directions
 func (action *Action) Interrupt(bywhat string, where [3]int) {
-	what := common.Split(*&action.Result)[0]
 	*&action.End = common.Epoch()
 	*&action.Start = - *&action.End + *&action.Start
 	if len(common.Split(bywhat)) < 1 { bywhat = "UNKNOWN" }
-	*&action.Result = fmt.Sprintf("INTERRUPTED|%s|by|%s|at|%d|%d|%d", what, bywhat, where[0], where[1], where[2])
+	*&action.Result = fmt.Sprintf("⛔️ | by:|%s| at:|%d|%d|%d", bywhat, where[0], where[1], where[2])
 }
 
 
@@ -115,14 +117,21 @@ func (action *Action) Where() ([3]int, [3]float64, error) {
 }
 
 // func (action *Action) Describe() map[string]string { return ParseTags((*action).Description) }
+func (action *Action) Elem() string { tags := common.Split((*action).ID) ; for _, each := range tags { if common.ElemInList(each, common.Elements) {return each} } ; return "ERR:NotFound" }
 func (action *Action) Succeeded() bool { return action.Valid() && ( action.Failed() == false ) }
-func (action *Action) Failed() bool { result := common.Split( *&action.Result ) ;  return result[0] == "INTERRUPTED" || result[0] == "RUINED" || result[0] == "FAILED" }
+func (action *Action) Failed() bool { result := common.Split( *&action.Result ) ;  return result[0] == "⛔️ " || result[0] == "🪫 " || result[0] == "🎲 " }
+func (action *Action) HasTag(tag string) bool {
+	isTag, inList := false, false
+	for _, each := range TagList { if each == tag { isTag = true } }
+	for _, each := range (*action).Tags { if each == tag {inList = true} }
+	return isTag && inList
+}
 
 func (action *Action) Valid() bool {
 	finishCheck := *&action.End > 0
 	if finishCheck == false { return false }
  	result := common.Split( *&action.Result ) 
-	lenCheck := len(result) == 8 || len(result) == 9 || len(result) == 10
+	lenCheck := len(result) == 8 || len(result) == 7 || len(result) == 10
 	if lenCheck == false { return false }
 	coordCheck, vectorCheck := false, false
 	_, vector, err := action.Where() ; if err == nil { coordCheck = true } else { return false }

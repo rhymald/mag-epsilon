@@ -22,7 +22,7 @@ func (str *Stream) EmitDot() *Dot { return &Dot{ str.Elem(): CeilRound( EthalonD
 
 // READ
 func (dot *Dot) Weight() float64 { return float64((*dot)[dot.Elem()]+MinWeight) / EthalonDotWeight }
-func (dot *Dot) Elem() string { for elem, _ := range *dot { return elem } ; return "ERR" }
+func (dot *Dot) Elem() string { for elem, _ := range *dot { return elem } ; return "ERR:NotFound" }
 func (dot *Dot) ToStr() string { return fmt.Sprintf("%s|%d", dot.Elem(), (*dot)[dot.Elem()] ) }
 func ParseDotFromStr(str string) (*Dot, error) {
 	var new Dot

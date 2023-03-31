@@ -12,6 +12,7 @@ import (
 
 // STRINGS
 func Split(what string) []string { return strings.Split(what, "|") }
+func ElemInList(what string, list []string) bool { if len(list) > len(Elements) {return false}; for _, each := range list { if each==what {return true} }; return false }
 // func ParseTags(what string) map[string]string {
 //   buffer, tags := make(map[string]string), Split(what)
 //   for _, each := range tags { 
@@ -32,19 +33,19 @@ func Cbrt(a float64) float64 { return math.Cbrt(a+1)-1 }
 func IsWithin(rand, base float64) bool { 
   entropy := Log10(base)/25
   if (1+0.0132437+entropy)*base+0.001 > rand && (1+0.0132437+entropy)*base-0.001 < rand { return true }
-  if (1+0.0132437+entropy)*(1+0.0132437+entropy)*base+0.001 > rand && (1+0.0132437+entropy)*(1+0.0132437+entropy)*base-0.001 < rand { return true }
+  // if (1+0.0132437+entropy)*(1+0.0132437+entropy)*base+0.001 > rand && (1+0.0132437+entropy)*(1+0.0132437+entropy)*base-0.001 < rand { return true }
   if base/(1+0.0132437+entropy)+0.001 > rand && base/(1+0.0132437+entropy)-0.001 < rand { return true }
-  if base/(1+0.0132437+entropy)/(1+0.0132437+entropy)+0.001 > rand && base/(1+0.0132437+entropy)/(1+0.0132437+entropy)-0.001 < rand { return true }
+  // if base/(1+0.0132437+entropy)/(1+0.0132437+entropy)+0.001 > rand && base/(1+0.0132437+entropy)/(1+0.0132437+entropy)-0.001 < rand { return true }
   if base+0.001 > rand && base-0.001 < rand { return true }
   return false
 }
 func Ntrp(a float64) float64 { 
-  randy := ( Epoch() / 100000000 ) % 10
+  randy := Epoch()/250 % 4
   entropy := Log10(a)/25 
-  if randy == 1 || randy == 4 { a = a*(1+0.0132437+entropy) }
-  if randy == 2 || randy == 3 { a = a*(1+0.0132437+entropy)*(1+0.0132437+entropy) }
-  if randy == 6 || randy == 9 { a = a/(1+0.0132437+entropy) }
-  if randy == 7 || randy == 8 { a = a/(1+0.0132437+entropy)/(1+0.0132437+entropy) }
+  if randy == 1 { a = a*(1+0.0132437+entropy) }
+  // if randy == 2 || randy == 3 { a = a*(1+0.0132437+entropy)*(1+0.0132437+entropy) }
+  if randy == 3 { a = a/(1+0.0132437+entropy) }
+  // if randy == 7 || randy == 8 { a = a/(1+0.0132437+entropy)/(1+0.0132437+entropy) }
   return math.Round( a*1000 ) / 1000
 }
 

@@ -27,7 +27,7 @@ func BRandNewStream(elem string, length int) *Stream {
 
 
 // READ
-func (str *Stream) Elem() string { for elem, _ := range *str { return elem } ; return "ERR" }
+func (str *Stream) Elem() string { for elem, _ := range *str { return elem } ; return "ERR:NotFound" }
 func (str *Stream) Cre() float64 { return float64((*str)[str.Elem()][0])/EthalonStreamLength }
 func (str *Stream) Alt() float64 { return float64((*str)[str.Elem()][1])/EthalonStreamLength }
 func (str *Stream) Des() float64 { return float64((*str)[str.Elem()][2])/EthalonStreamLength }

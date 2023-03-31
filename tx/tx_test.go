@@ -5,13 +5,13 @@ import (
 	"rhymald/mag-epsilon/balance/common"
 	"rhymald/mag-epsilon/characters"
 	"rhymald/mag-epsilon/fancy"
-	// "fmt"
+	"fmt"
 )
 
 func Test_Actions(t *testing.T){
 	pass, pass2, reset := fancy.Clr(1), fancy.Clr(1), fancy.Clr(0) 
 	stats := characters.BRandNewStats(common.Physical[1])
-	action := NewAction("Interrupted", stats)
+	action := NewAction("Interrupted", "", stats)
 	t.Logf("Creating - %+v", *action)
 	for x:=0; x<0; x++ {
 		for y:=0; y<len((*stats).Streams); y++ {
@@ -31,7 +31,7 @@ func Test_Actions(t *testing.T){
 	if action.Succeeded() == false { pass2 = fancy.Clr(8) } else { pass2 = fancy.Clr(2) }
 	t.Logf("Interrupted - %sValid: %+v%s, %sSucceeded: %+v%s (false)", pass, action.Valid(), reset, pass2, action.Succeeded(), reset)
 	t.Logf("-------------------------------------------------")
-	action = NewAction("LowEnergy", stats)
+	action = NewAction("LowEnergy", "", stats)
 	t.Logf("Creating - %+v", *action)
 	for x:=0; x<1; x++ {
 		for y:=0; y<len((*stats).Streams); y++ {
@@ -51,7 +51,7 @@ func Test_Actions(t *testing.T){
 	if action.Succeeded() == true { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(2) }
 	t.Logf("Low energy - %sValid: %+v%s, %sSucceeded: %+v%s (any)", pass, action.Valid(), reset, pass2, action.Succeeded(), reset)
 	t.Logf("-------------------------------------------------")
-	action = NewAction("Weak", stats)
+	action = NewAction("Weak", "", stats)
 	t.Logf("Creating - %+v", *action)
 	for x:=0; x<3; x++ {
 		for y:=0; y<len((*stats).Streams); y++ {
@@ -71,7 +71,7 @@ func Test_Actions(t *testing.T){
 	if action.Succeeded() == true { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(2) }
 	t.Logf("Weak streams - %sValid: %+v%s, %sSucceeded: %+v%s (any)", pass, action.Valid(), reset, pass2, action.Succeeded(), reset)
 	t.Logf("-------------------------------------------------")
-	action = NewAction("SelfCast", stats)
+	action = NewAction("SelfCast", "", stats)
 	t.Logf("Creating - %+v", *action)
 	for x:=0; x<3; x++ {
 		for y:=0; y<len((*stats).Streams); y++ {
@@ -91,7 +91,7 @@ func Test_Actions(t *testing.T){
 	if action.Succeeded() == true { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(2) }
 	t.Logf("Self - %sValid: %+v%s, %sSucceeded: %+v%s (any)", pass, action.Valid(), reset, pass2, action.Succeeded(), reset)
 	t.Logf("-------------------------------------------------")
-	action = NewAction("Successful", stats)
+	action = NewAction("Successful", "", stats)
 	t.Logf("Creating - %+v", *action)
 	for x:=0; x<2; x++ {
 		for y:=0; y<len((*stats).Streams); y++ {
@@ -116,7 +116,7 @@ func Test_Effect(t *testing.T){
 	waiting := 0.0
 	pass, pass2, reset := fancy.Clr(1), fancy.Clr(1), fancy.Clr(0) 
 	stats := characters.BRandNewStats(common.Physical[1])
-	action := NewAction("Interrupted", stats)
+	action := NewAction("Interrupted", "", stats)
 	t.Logf("Creating - %+v", *action)
 	for x:=0; x<2; x++ {
 		for y:=0; y<len((*stats).Streams); y++ {
@@ -141,7 +141,7 @@ func Test_Effect(t *testing.T){
 	t.Logf(" - %+v", *effect)
 	t.Logf("-------------------------------------------------")
 	stats = characters.BRandNewStats(common.Physical[1])
-	action = NewAction("JINX", stats)
+	action = NewAction("JINX", "Damage", stats)
 	t.Logf("JINX Creating - %+v", *action)
 	for x:=0; x<4; x++ {
 		for y:=0; y<len((*stats).Streams); y++ {
@@ -169,28 +169,22 @@ func Test_Effect(t *testing.T){
 func Test_Effects(t *testing.T){
 	waiting := 0.0
 	pass, pass2, reset := fancy.Clr(1), fancy.Clr(1), fancy.Clr(0) 
-	for repeats := 0; repeats < 22; repeats++ {
+	for repeats := 0; repeats < 20; repeats++ {
 		if repeats != 0 { t.Logf("-------------------------------------------------") }
 		stats := characters.BRandNewStats(common.Physical[1])
-		action := NewAction("JINX", stats)
-		// t.Logf("JINX Creating - %+v", *action)
+		action := NewAction(fmt.Sprintf("%s|JINX", common.Elements[0]), "Damage|Blast", stats)
 		for x:=0; x<4; x++ {
 			for y:=0; y<len((*stats).Streams); y++ {
 				dot := (*stats).Streams[y].EmitDot()
 				action.Feed(y+1, dot) ; common.Wait(waiting)
-				// t.Logf(" - %+v", (*action).ByWith)
 			}
 			stats.BrandAStream(false)
 			stats.GrowAStream(false)
 		}
-		// if action.Valid() == false { pass = fancy.Clr(8) } else { pass = fancy.Clr(2) }
-		// t.Logf("JINX Fed - %sValid: %+v%s (false)", pass, action.Valid(), reset)
-		action.Finish((common.Rand()+1)/2, 0, 20, [3]int{400+repeats*10,900+repeats*10,0+repeats*10}, [3]int{123,31+repeats*10,87-repeats*10})
-		// t.Logf("JINX Finished - %+v", *action)
-		// t.Logf("JINX Result: %+v", *&action.Result)
+		action.Finish((common.Rand()+.8)/1.8, 0, 20, [3]int{400+repeats*10,900-repeats*10,0+repeats*10}, [3]int{123,31+repeats*10,87-repeats*10})
 		if action.Valid() == true { pass = fancy.Clr(1) } else { pass = fancy.Clr(2) }
-		if action.Succeeded() == true { pass2 = fancy.Clr(1) } else { pass2 = fancy.Clr(8) }
-		t.Logf("JINX Action - %sValid: %+v%s, %sSucceeded: %+v%s (any) - %+v", pass, action.Valid(), reset, pass2, action.Succeeded(), reset, *&action.Result)
+		if action.Succeeded() == true { pass2 = fancy.Clr(1)+" " } else { pass2 = fancy.Clr(8) }
+		t.Logf("JINX Action - %sValid: %+v%s, %sSucceeded: %+v%s - %+v", pass, action.Valid(), reset, pass2, action.Succeeded(), reset, *&action.Result)
 		effect, err := action.NewEffect(0) 
 		if err != nil { t.Logf(" - %+v", err) } else {
 			t.Logf("JINX Effect - %+v", *effect)	
