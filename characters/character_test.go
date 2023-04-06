@@ -60,3 +60,10 @@ func Test_GainDot_BurnDot(t *testing.T){
 		if common.Epoch()-start > 1024000000 {break}
 	}
 }
+
+func Test_Spawn(t *testing.T){
+	t.Logf("Logins: %+v", LoginPoints)
+	for _, each := range LoginPoints { t.Logf(" - %+v", *each) }
+	t.Logf("Dummies: %+v", Spawn_Dummies)
+	for _, each := range Spawn_Dummies { t.Logf(" - %+v", *each) }
+}
