@@ -65,8 +65,8 @@ func Spawn_TrainingsDummies(world string) []*SpawnPoint {
 			ID: "Training dummy",
 			Behavior: "Calm|Apathy|Stationary", 
 			Lifecycle: 1000 * 60 * 5, // ms
-			Size:   common.Stream{ common.Physical[2]+"|"+common.Physical[4]: [3]int{13, 3, 10} }, // x to y to z
-			Attune: common.Stream{ common.Elements[0]+"|"+common.Elements[3]: [3]int{ 8, 9, 8} }, // x + y + z = 100.0%
+			Size:   common.Stream{ common.Physical[2]+"|"+common.Physical[4]: [3]int{0, 0, 0} }, // x to y to z
+			Attune: common.Stream{ common.Elements[0]+"|"+common.Elements[3]+"|"+common.Elements[1]: [3]int{0, 0, 0} }, // x + y + z = 100.0%
 		}
 		for rad, xyz := range coords {
 			plus := scratch

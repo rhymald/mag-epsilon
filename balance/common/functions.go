@@ -79,6 +79,7 @@ func ChancedRound(a float64) int {
 
 func BornLuck(time int) int { if time%10 == 0 {return 2} else if time%10 == 9 {return 5} else if time%10 < 5 {return 3} else {return 4} ; return 0}
 func Epoch() int { return int(time.Now().UnixNano())/1000000 }
+func EpochNS() int { return int(time.Now().UnixNano()) }
 
 // TIME
 func Wait(ms float64) { time.Sleep( time.Millisecond * time.Duration( ms )) }

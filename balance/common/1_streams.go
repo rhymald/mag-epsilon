@@ -70,10 +70,15 @@ func (str *Stream) Plus(ll float64) float64 {
 	return multiplier
 }
 
-func (str *Stream) Attune() {
-	if len(ElemList[str.Elem()].Next) == 0 { return }
-	picker := Epoch() % len(ElemList[str.Elem()].Next) 
-	newElem := ElemList[str.Elem()].Next[picker]
+func (str *Stream) Attune(e string) {
+	newElem := "ERR"
+	for _, each := range Elements { if e == each { newElem = e } }
+	for _, each := range Physical { if e == each { newElem = e } }
+	if len(ElemList[str.Elem()].Next) == 0 && newElem == "ERR" { return }
+	if newElem == "ERR" { 
+		picker := Epoch() % len(ElemList[str.Elem()].Next) 
+		newElem = ElemList[str.Elem()].Next[picker] 
+	}
 	buffer := Stream{ newElem : (*str)[str.Elem()] }
 	*str = buffer
 }

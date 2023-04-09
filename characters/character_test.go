@@ -64,6 +64,26 @@ func Test_GainDot_BurnDot(t *testing.T){
 func Test_Spawn(t *testing.T){
 	t.Logf("Logins: %+v", LoginPoints)
 	for _, each := range LoginPoints { t.Logf(" - %+v", *each) }
+	for x:=0; x<len(LoginPoints)*3; x++ {
+		stats := BRandNewStats(common.Physical[common.EpochNS()%5])
+		char := stats.LoadCharacter(LoginPoints[common.EpochNS()%len(LoginPoints)], BrandNewLife(len((*stats).Streams)))
+		t.Logf("---------------------------")
+		t.Logf("XYZ:: %+v, %+v", (*char).XYZ, (*char).View)
+		t.Logf("Atts: %+v", (*char).Atts)
+		t.Logf("Base: %+v", (*char).Base)
+		t.Logf("Cons: %+v", (*char).Cons)
+	}
+	t.Logf("=========================================================") 
 	t.Logf("Dummies: %+v", Spawn_Dummies)
 	for _, each := range Spawn_Dummies { t.Logf(" - %+v", *each) }
+	for x:=0; x<len(Spawn_Dummies)*2; x++ {
+		stats := BRandNewStats(common.Physical[common.EpochNS()%5])
+		char := stats.LoadCharacter(Spawn_Dummies[common.EpochNS()%len(Spawn_Dummies)], BrandNewLife(len((*stats).Streams)))
+		t.Logf("---------------------------") 
+		t.Logf("XYZ:: %+v, %+v", (*char).XYZ, (*char).View)
+		t.Logf("Atts: %+v", *(*char).Atts)
+		t.Logf("Spwn: %+v", *stats)
+		t.Logf("Base: %+v, %+v, %+v", *(*char).Base, (*char).Base.Body, (*char).Base.Streams[0])
+		t.Logf("Cons: %+v", *(*char).Cons)
+	}
 }

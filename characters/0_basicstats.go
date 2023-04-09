@@ -69,7 +69,7 @@ func (stats *BasicStats) BrandAStream(override bool) {
 	if true || override { 
 		stats.Lock()
 		picked := *&stats.Streams[picker]
-		picked.Attune()
+		picked.Attune("")
 		*&stats.Streams[picker] = picked
 		*&stats.ID.Last = common.Epoch()
 		stats.Unlock()
@@ -87,3 +87,10 @@ func (stats *BasicStats) GetID() string {
   pstring, sstring := fmt.Sprintf("%X", pid), fmt.Sprintf("%X", sid)
 	return fmt.Sprintf("%v-%v/%v-%v", pstring[:4], pstring[119:128], sstring[:1], sstring[121:128])
 }
+
+func (stats *BasicStats) MeanStr() float64 {
+	meanie := 0.0
+	for _, each := range (*stats).Streams { meanie += 1 / each.Len() }
+	return float64(len((*stats).Streams)) / meanie
+}
+
