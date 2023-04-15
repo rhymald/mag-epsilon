@@ -78,6 +78,11 @@ func (stats *BasicStats) BrandAStream(override bool) {
 
 
 // READ
+func (stats *BasicStats) IsNPC() bool { 
+	if len((*stats).Streams) == 1 || (*stats).ID.Last > (*stats).ID.Entificator { return true }
+	return false
+}
+
 func (stats *BasicStats) GetID() string { 
 	in_bytes := make([]byte, 8)
   binary.LittleEndian.PutUint64(in_bytes, uint64(stats.ID.Entificator))
@@ -85,7 +90,7 @@ func (stats *BasicStats) GetID() string {
   binary.LittleEndian.PutUint64(in_bytes, uint64(stats.ID.Last))
   sid := fmt.Sprintf("%X", sha512.Sum512(in_bytes))
   pstring, sstring := fmt.Sprintf("%X", pid), fmt.Sprintf("%X", sid)
-	return fmt.Sprintf("%v-%v/%v-%v", pstring[:4], pstring[119:128], sstring[:1], sstring[121:128])
+	return fmt.Sprintf("%v-%v|%v-%v", pstring[:4], pstring[119:128], sstring[:1], sstring[121:128])
 }
 
 func (stats *BasicStats) MeanStr() float64 {

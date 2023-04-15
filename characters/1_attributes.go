@@ -7,12 +7,12 @@ import (
 )
 
 type Attributes struct {
-	Is struct {
-		Busy bool // can cast
-		Regen bool // can regen, out of peace
-		Active bool // logged in, or spawned
-		Mobile bool // can move
-	}
+	// Is struct {
+	// 	Busy bool // can cast
+	// 	Regen bool // can regen, out of peace
+	// 	Active bool // logged in, or spawned
+	// 	Mobile bool // can move
+	// }
 	Vitality float64
 	Poolsize float64
 	Resists map[string]float64

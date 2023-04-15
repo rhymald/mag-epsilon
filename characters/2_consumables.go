@@ -6,9 +6,11 @@ import (
 )
 
 type Consumables struct {
+	ID struct { Last int }
 	HP int
 	Pool []*common.Dot
 	Flocks []*common.Flock
+	XYZ [3]int
 	// Inbound []*common.Effect
 	// Outbound []*common.Action
 	sync.Mutex

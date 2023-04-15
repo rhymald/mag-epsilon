@@ -58,6 +58,7 @@ func Rand() float64 {
   return rand.New(rand.NewSource( int64(sum) )).Float64()
 }
 
+func Between(xyz, abc [3]int) float64 { return Vector( float64(xyz[0]-abc[0]), float64(xyz[1]-abc[1]), float64(xyz[2]-abc[2]) ) }
 func Vector(props ...float64) float64 {
   sum := 0.0
   for _, each := range props { sum += each*each }

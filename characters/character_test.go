@@ -66,7 +66,7 @@ func Test_Spawn(t *testing.T){
 	for _, each := range LoginPoints { t.Logf(" - %+v", *each) }
 	for x:=0; x<len(LoginPoints)*3; x++ {
 		stats := BRandNewStats(common.Physical[common.EpochNS()%5])
-		char := stats.LoadCharacter(LoginPoints[common.EpochNS()%len(LoginPoints)], BrandNewLife(len((*stats).Streams)))
+		char := stats.ComposeCharacter(LoginPoints[common.EpochNS()%len(LoginPoints)], BrandNewLife(len((*stats).Streams)))
 		t.Logf("---------------------------")
 		t.Logf("XYZ:: %+v, %+v", (*char).XYZ, (*char).View)
 		t.Logf("Atts: %+v", (*char).Atts)
@@ -78,7 +78,7 @@ func Test_Spawn(t *testing.T){
 	for _, each := range Spawn_Dummies { t.Logf(" - %+v", *each) }
 	for x:=0; x<len(Spawn_Dummies)*2; x++ {
 		stats := BRandNewStats(common.Physical[common.EpochNS()%5])
-		char := stats.LoadCharacter(Spawn_Dummies[common.EpochNS()%len(Spawn_Dummies)], BrandNewLife(len((*stats).Streams)))
+		char := stats.ComposeCharacter(Spawn_Dummies[common.EpochNS()%len(Spawn_Dummies)], BrandNewLife(len((*stats).Streams)))
 		t.Logf("---------------------------") 
 		t.Logf("XYZ:: %+v, %+v", (*char).XYZ, (*char).View)
 		t.Logf("Atts: %+v", *(*char).Atts)
